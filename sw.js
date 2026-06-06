@@ -1,7 +1,7 @@
 // ============================================================
 // Service Worker for Aleph with Beth Tracker
 // ============================================================
-const CACHE_NAME = 'aleph-beth-v10';
+const CACHE_NAME = 'aleph-beth-v11';
 
 const STATIC_ASSETS = [
     './',
