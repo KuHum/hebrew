@@ -1,6 +1,6 @@
 {
-  "name": "Aleph with Beth Tracker",
-  "short_name": "AwB Tracker",
+  "name": "Learn Hebrew with Beth",
+  "short_name": "Learn Hebrew",
   "description": "Offline-first tracker for the Aleph with Beth Hebrew learning schedule",
   "start_url": "/",
   "display": "standalone",
