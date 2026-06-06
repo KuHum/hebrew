@@ -7,7 +7,10 @@
     <meta name="description" content="Offline-first tracker for the Learn Biblical Hebrew schedule">
     <title>Learn Biblical Hebrew</title>
     <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234a7c8c' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' fill='white' font-size='50' font-family='serif'>א</text></svg>">
+    <!-- Favicon (SVG) for browser tabs -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234a7c8c' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' fill='white' font-size='50' font-family='serif'>א</text></svg>" type="image/svg+xml">
+    <!-- Apple touch icon (PNG) for iOS homescreen -->
+    <link rel="apple-touch-icon" href="./icons/icon-192.png">
     <style>
         :root {
             --bg: #f5f3ef;
@@ -58,7 +61,7 @@
             background: var(--bg);
             padding: 20px 0 12px;
             text-align: center;
-            border-bottom: 1px solid var(--divider); /* subtle separator */
+            border-bottom: 1px solid var(--divider);
         }
 
         .header-icon {
@@ -320,7 +323,6 @@
 <body>
 <div class="app-container" id="appContainer">
     <header class="app-header" id="appHeader">
-        <!-- Centered icon + title -->
         <div class="header-icon">א</div>
         <h1 class="app-title">Learn Biblical Hebrew</h1>
         <p class="attribution">
@@ -338,7 +340,6 @@
         <div class="loading-state" id="loadingState"><div class="loading-spinner"></div><p>Loading your learning schedule&hellip;</p></div>
     </main>
 
-    <!-- FOOTER -->
     <footer class="app-footer" id="appFooter">
         <div class="footer-tools">
             <button class="tool-btn" id="exportBtn">📥 Export progress</button>
@@ -358,13 +359,11 @@
         <button class="footer-read-more" id="readMoreBtn" aria-label="Read more about this app">ℹ️&ensp;About &amp; Contact</button>
     </footer>
 
-    <!-- Floating jump button -->
     <button class="jump-btn" id="jumpBtn" title="Jump to current week" aria-label="Jump to current week">
         <span style="font-size:1.2rem;">📖</span>
     </button>
 </div>
 
-<!-- ── ABOUT & CONTACT OVERLAY ── -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -451,7 +450,6 @@
         dom.sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
     }
 
-    // ---------- Utility ----------
     function generateTaskId(weekTitle, dayTitle, taskText) {
         const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
         let hash = 0;
@@ -500,7 +498,6 @@
         };
     }
 
-    // ---------- Storage ----------
     function loadTaskStates() {
         try {
             const raw = localStorage.getItem(CONFIG.storageKey);
@@ -546,7 +543,6 @@
         try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
     }
 
-    // ---------- Parser ----------
     function parseLessons(markdown) {
         const lines = markdown.split('\n');
         const weeks = [];
@@ -619,7 +615,6 @@
         return weeks;
     }
 
-    // ---------- Rendering ----------
     let collapseState = { weeks: {}, days: {} };
 
     function renderApp(weeksData, savedStates) {
@@ -772,7 +767,6 @@
         refreshAllProgress();
     }
 
-    // ---------- Progress ----------
     function calculateProgress(week, savedStates) {
         let total=0, completed=0;
         week.days.forEach(day => {
@@ -838,7 +832,6 @@
         });
     }
 
-    // ---------- Jump ----------
     function jumpToCurrentWeek() {
         const weeksData = window._currentWeeksData;
         const states = loadTaskStates();
@@ -863,7 +856,6 @@
         if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ---------- Export / Import ----------
     function exportProgress() {
         const states = loadTaskStates();
         const fallbackMap = window._fallbackMap || {};
@@ -921,7 +913,6 @@
         reader.readAsText(file);
     }
 
-    // ---------- Version ----------
     async function fetchVersion() {
         try {
             const response = await fetch(CONFIG.versionFile, { headers: { 'Cache-Control': 'no-cache' } });
@@ -937,7 +928,6 @@
         }
     }
 
-    // ---------- Overlay & Feedback ----------
     function openOverlay() {
         dom.aboutOverlay.classList.add('visible');
         dom.aboutOverlay.setAttribute('aria-hidden', 'false');
@@ -988,7 +978,6 @@
         }
     }
 
-    // ---------- Network ----------
     async function fetchLessonsMarkdown() {
         const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
         if (!resp.ok) throw new Error('Failed to fetch lessons.md');
@@ -1012,7 +1001,6 @@
         } catch(e) { console.error('SW reg failed', e); }
     }
 
-    // ---------- Init ----------
     async function initApp() {
         cacheDomReferences();
         fetchVersion();
