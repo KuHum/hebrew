@@ -52,24 +52,44 @@
             padding-bottom: env(safe-area-inset-bottom,20px);
         }
         .app-container { max-width: var(--max-width); margin: 0 auto; padding: 16px 16px 40px; }
+
+        /* ── Centered header (Option A) ── */
         .app-header {
             position: sticky; top: 0; z-index: 100; background: var(--bg);
-            padding: 16px 0 10px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 20px 0 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             border-bottom: 1px solid transparent; transition: border-color var(--transition-fast);
+            text-align: center;
         }
         .app-header.scrolled { border-bottom-color: var(--card-border); }
-        .header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-        .app-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
-        .app-title .hebrew-char {
+
+        .header-icon {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px; background: var(--accent); color: #fff;
-            border-radius: var(--radius-sm); font-size: 1.4rem; font-weight: 500; flex-shrink: 0;
+            width: 56px; height: 56px; background: var(--accent); color: #fff;
+            border-radius: 12px; font-size: 2rem; font-weight: 500;
+            margin-bottom: 8px;
         }
-        .sync-status { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+        .app-title {
+            font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em;
+            margin-bottom: 2px; color: var(--text-primary);
+        }
+        .attribution {
+            font-size: 0.65rem; color: var(--text-muted);
+            margin-bottom: 12px; line-height: 1.4;
+        }
+        .attribution a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+        /* Sync status – top right corner */
+        .sync-status {
+            position: absolute; top: 16px; right: 16px;
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.7rem; color: var(--text-muted);
+            white-space: nowrap;
+        }
         .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; transition: background var(--transition-fast); }
         .sync-dot.offline { background: #d4a76a; }
         .sync-dot.syncing { background: #4a7c8c; animation: pulse 1s infinite; }
         @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.4;} }
+
         .total-progress-section { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
         .total-progress-bar-outer { flex: 1; height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
         .total-progress-bar-inner { height: 100%; background: var(--success); border-radius: 3px; transition: width var(--transition-smooth); width: 0%; }
@@ -81,14 +101,6 @@
         .error-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
         .retry-btn { margin-top: 16px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast); }
         .retry-btn:hover { background: var(--accent-dark); }
-
-        .attribution {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-            line-height: 1.4;
-        }
-        .attribution a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
         .avg-note {
             text-align: center;
@@ -216,6 +228,7 @@
             font-size: 0.72rem; margin-bottom: 2px;
         }
         .footer-church a { color: var(--accent); text-decoration: underline; }
+        .app-footer a { color: var(--link-color); text-decoration: underline; } /* all footer links */
         .footer-soli {
             font-size: 0.72rem; font-weight: 500; margin-top: 6px;
             color: var(--text-secondary);
@@ -275,7 +288,6 @@
             text-align: center; font-size: 0.82rem; font-weight: 500;
             margin-top: 8px; color: var(--text-secondary);
         }
-        /* Feedback form inputs */
         .overlay-panel input[type="text"],
         .overlay-panel input[type="email"],
         .overlay-panel textarea {
@@ -300,7 +312,7 @@
 
         @media (max-width:480px) {
             .app-container { padding: 10px 10px 32px; }
-            .app-title { font-size: 1.25rem; }
+            .app-title { font-size: 1.5rem; }
             .week-header { padding: 12px 14px; }
             .week-body-content { padding: 0 14px 12px; }
             .day-header { padding: 8px 10px; }
@@ -321,18 +333,19 @@
 <body>
 <div class="app-container" id="appContainer">
     <header class="app-header" id="appHeader">
-        <div class="header-top">
-            <div>
-                <h1 class="app-title"><span class="hebrew-char">א</span> Learn Biblical Hebrew</h1>
-                <p class="attribution">
-                    Courtesy of <a href="https://freehebrew.online/" target="_blank" rel="noopener noreferrer">Aleph with Beth</a>
-                </p>
-            </div>
-            <span class="sync-status" id="syncStatus">
-                <span class="sync-dot" id="syncDot"></span>
-                <span id="syncLabel">Ready</span>
-            </span>
-        </div>
+        <!-- Sync status – top right corner -->
+        <span class="sync-status" id="syncStatus">
+            <span class="sync-dot" id="syncDot"></span>
+            <span id="syncLabel">Ready</span>
+        </span>
+
+        <!-- Centered icon + title -->
+        <div class="header-icon">א</div>
+        <h1 class="app-title">Learn Biblical Hebrew</h1>
+        <p class="attribution">
+            Courtesy of <a href="https://freehebrew.online/" target="_blank" rel="noopener noreferrer">Aleph with Beth</a>
+        </p>
+
         <div class="total-progress-section" id="totalProgressSection">
             <div class="total-progress-bar-outer"><div class="total-progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
             <span class="total-progress-label" id="totalProgressLabel">0.00%</span>
@@ -364,9 +377,9 @@
         <button class="footer-read-more" id="readMoreBtn" aria-label="Read more about this app">ℹ️&ensp;About &amp; Contact</button>
     </footer>
 
-    <!-- Floating jump button -->
+    <!-- Floating jump button (icon changed to open book) -->
     <button class="jump-btn" id="jumpBtn" title="Jump to current week" aria-label="Jump to current week">
-        <span style="font-size:1.2rem;">📍</span>
+        <span style="font-size:1.2rem;">📖</span>
     </button>
 </div>
 
@@ -461,7 +474,7 @@
         dom.sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
     }
 
-    // ---------- Utility (unchanged) ----------
+    // ---------- Utility ----------
     function generateTaskId(weekTitle, dayTitle, taskText) {
         const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
         let hash = 0;
@@ -510,7 +523,7 @@
         };
     }
 
-    // ---------- Storage (unchanged) ----------
+    // ---------- Storage ----------
     function loadTaskStates() {
         try {
             const raw = localStorage.getItem(CONFIG.storageKey);
@@ -556,7 +569,7 @@
         try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
     }
 
-    // ---------- Parser (unchanged) ----------
+    // ---------- Parser ----------
     function parseLessons(markdown) {
         const lines = markdown.split('\n');
         const weeks = [];
@@ -629,7 +642,7 @@
         return weeks;
     }
 
-    // ---------- Rendering (unchanged) ----------
+    // ---------- Rendering ----------
     let collapseState = { weeks: {}, days: {} };
 
     function renderApp(weeksData, savedStates) {
@@ -642,7 +655,7 @@
         weeksData.forEach(week => {
             if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = false;
             week.days.forEach(day => {
-                if (!(day.id in collapseState.days)) collapseState.days[day.id] = true;
+                if (!(day.id in collapseState.days)) collapseState.days[day.id] = false;  // days collapsed by default
             });
         });
         weeksData.forEach(week => {
@@ -783,7 +796,7 @@
         refreshAllProgress();
     }
 
-    // ---------- Progress (unchanged) ----------
+    // ---------- Progress ----------
     function calculateProgress(week, savedStates) {
         let total=0, completed=0;
         week.days.forEach(day => {
@@ -849,7 +862,7 @@
         });
     }
 
-    // ---------- Jump (unchanged) ----------
+    // ---------- Jump ----------
     function jumpToCurrentWeek() {
         const weeksData = window._currentWeeksData;
         const states = loadTaskStates();
@@ -874,7 +887,7 @@
         if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ---------- Export / Import (unchanged) ----------
+    // ---------- Export / Import ----------
     function exportProgress() {
         const states = loadTaskStates();
         const fallbackMap = window._fallbackMap || {};
