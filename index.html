@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f5f3ef">
     <meta name="description" content="Offline-first tracker for the Aleph with Beth Hebrew learning schedule">
-    <title>Aleph with Beth Tracker</title>
+    <title>Learn Hebrew with Beth</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234a7c8c' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' fill='white' font-size='50' font-family='serif'>א</text></svg>">
     <style>
@@ -38,6 +38,34 @@
             --input-bg: #faf9f7;
             --input-border: #d0ccc4;
             --input-focus: #4a7c8c;
+            --float-btn-bg: #ffffff;
+            --float-btn-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        /* Dark mode overrides */
+        :root[data-theme="dark"] {
+            --bg: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --card-border: #3a3a3a;
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.3);
+            --text-primary: #e0e0e0;
+            --text-secondary: #aaaaaa;
+            --text-muted: #888888;
+            --accent: #7eb4c4;
+            --accent-light: #2a3a3f;
+            --accent-dark: #5a8c9a;
+            --success: #8bbd9a;
+            --success-light: #2a3a30;
+            --duration-bg: #3a332a;
+            --duration-text: #c0a070;
+            --link-color: #7eb4c4;
+            --divider: #3a3a3a;
+            --input-bg: #2a2a2a;
+            --input-border: #555555;
+            --input-focus: #7eb4c4;
+            --float-btn-bg: #2a2a2a;
+            --float-btn-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,12 +77,13 @@
             line-height: 1.6;
             min-height: 100vh; min-height: 100dvh;
             padding-bottom: env(safe-area-inset-bottom,20px);
+            transition: background-color var(--transition-smooth), color var(--transition-smooth);
         }
         .app-container { max-width: var(--max-width); margin: 0 auto; padding: 16px 16px 40px; }
         .app-header {
             position: sticky; top: 0; z-index: 100; background: var(--bg);
             padding: 16px 0 10px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            border-bottom: 1px solid transparent; transition: border-color var(--transition-fast);
+            border-bottom: 1px solid transparent; transition: border-color var(--transition-fast), background var(--transition-smooth);
         }
         .app-header.scrolled { border-bottom-color: var(--card-border); }
         .header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -72,7 +101,7 @@
         .total-progress-section { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
         .total-progress-bar-outer { flex: 1; height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
         .total-progress-bar-inner { height: 100%; background: var(--success); border-radius: 3px; transition: width var(--transition-smooth); width: 0%; }
-        .total-progress-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+        .total-progress-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
         .main-content { margin-top: 12px; }
         .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
         .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--card-border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
@@ -81,27 +110,114 @@
         .retry-btn { margin-top: 16px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast); }
         .retry-btn:hover { background: var(--accent-dark); }
 
-        .week-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); box-shadow: var(--card-shadow); margin-bottom: 16px; overflow: hidden; transition: box-shadow var(--transition-smooth); }
+        /* Attribution line */
+        .attribution {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+        .attribution a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* Average time note */
+        .avg-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 8px 0 0;
+            font-style: italic;
+        }
+
+        /* Dark mode toggle button */
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: background var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .theme-toggle-btn:hover {
+            background: var(--accent-light);
+        }
+
+        /* Export/Import buttons */
+        .tool-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .tool-btn {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        .tool-btn:hover {
+            background: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        /* Jump to current week floating button */
+        .jump-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--float-btn-bg);
+            box-shadow: var(--float-btn-shadow);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--accent);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .jump-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .week-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); box-shadow: var(--card-shadow); margin-bottom: 16px; overflow: hidden; transition: box-shadow var(--transition-smooth), background var(--transition-smooth); }
         .week-card:hover { box-shadow: var(--card-shadow-hover); }
         .week-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; gap: 12px; transition: background var(--transition-fast); }
-        .week-header:hover { background: #fafaf8; }
+        .week-header:hover { background: var(--accent-light); }
         .week-title-group { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
         .week-icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light); color: var(--accent); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
         .week-title { font-size: 1.05rem; font-weight: 600; }
-        .week-progress-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: #f8f7f5; padding: 4px 10px; border-radius: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+        .week-progress-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: var(--accent-light); padding: 4px 10px; border-radius: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
         .week-progress-badge.complete { background: var(--success-light); color: var(--success); }
         .week-chevron { width: 22px; height: 22px; color: var(--text-muted); transition: transform var(--transition-smooth); flex-shrink: 0; }
         .week-card.expanded .week-chevron { transform: rotate(180deg); }
-        .week-metadata { padding: 0 18px 4px; font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
         .week-body-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--transition-smooth); }
         .week-card.expanded .week-body-wrapper { grid-template-rows: 1fr; }
         .week-body-inner { overflow: hidden; }
         .week-body-content { padding: 0 18px 16px; border-top: 1px solid var(--divider); }
 
-        .day-section { margin-top: 10px; border: 1px solid #f0ede7; border-radius: var(--radius-md); overflow: hidden; }
+        .day-section { margin-top: 10px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; }
         .day-section:first-child { margin-top: 12px; }
-        .day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: #fafaf8; gap: 8px; transition: background var(--transition-fast); }
-        .day-header:hover { background: #f5f3ef; }
+        .day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: var(--accent-light); gap: 8px; transition: background var(--transition-fast); }
+        .day-header:hover { background: var(--card-border); }
         .day-title-group { display: flex; align-items: center; gap: 8px; flex: 1; }
         .day-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); transition: background var(--transition-fast); }
         .day-dot.complete { background: var(--success); }
@@ -114,7 +230,6 @@
         .day-section.expanded .day-body-wrapper { grid-template-rows: 1fr; }
         .day-body-inner { overflow: hidden; }
         .day-body-content { padding: 6px 14px 12px; }
-        .day-metadata { font-size: 0.75rem; color: var(--text-muted); font-style: italic; padding: 2px 0 6px; margin-top: 4px; border-top: 1px dotted var(--divider); }
 
         .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; transition: opacity var(--transition-smooth); }
         .task-item.completed { opacity: 0.55; }
@@ -190,24 +305,50 @@
 <div class="app-container" id="appContainer">
     <header class="app-header" id="appHeader">
         <div class="header-top">
-            <h1 class="app-title"><span class="hebrew-char">א</span> Aleph with Beth Tracker</h1>
-            <span class="sync-status" id="syncStatus"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Ready</span></span>
+            <div>
+                <h1 class="app-title"><span class="hebrew-char">א</span> Learn Hebrew with Beth</h1>
+                <p class="attribution">
+                    Based on the Aleph with Beth curriculum (public domain). <a href="https://freehebrew.online/" target="_blank" rel="noopener noreferrer">freehebrew.online</a>
+                </p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <span class="sync-status" id="syncStatus">
+                    <span class="sync-dot" id="syncDot"></span>
+                    <span id="syncLabel">Ready</span>
+                </span>
+            </div>
         </div>
         <div class="total-progress-section" id="totalProgressSection">
             <div class="total-progress-bar-outer"><div class="total-progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
-            <span class="total-progress-label" id="totalProgressLabel">0%</span>
+            <span class="total-progress-label" id="totalProgressLabel">0.00%</span>
+        </div>
+        <p class="avg-note">Each study day takes about 1 hour on average.</p>
+        <div class="tool-buttons">
+            <button class="tool-btn" id="exportBtn">📥 Export progress</button>
+            <button class="tool-btn" id="importBtn">📤 Import progress</button>
         </div>
     </header>
     <main class="main-content" id="mainContent">
         <div class="loading-state" id="loadingState"><div class="loading-spinner"></div><p>Loading your learning schedule&hellip;</p></div>
     </main>
+    <!-- Floating jump button -->
+    <button class="jump-btn" id="jumpBtn" title="Jump to current week" aria-label="Jump to current week">
+        <span style="font-size:1.2rem;">📍</span>
+    </button>
 </div>
+
+<!-- Hidden file input for import -->
+<input type="file" id="importFileInput" accept=".json" style="display:none;">
+
 <script>
 (function() {
     const CONFIG = {
         lessonsFile: './lessons.md',
         storageKey: 'aleph-beth-task-states',
-        cacheName: 'aleph-beth-v1',
+        cacheName: 'aleph-beth-v2',
         debounceMs: 300,
     };
 
@@ -223,8 +364,15 @@
         dom.syncLabel = document.getElementById('syncLabel');
         dom.syncStatus = document.getElementById('syncStatus');
         dom.totalProgressSection = document.getElementById('totalProgressSection');
+        dom.themeToggleBtn = document.getElementById('themeToggleBtn');
+        dom.themeIcon = document.getElementById('themeIcon');
+        dom.jumpBtn = document.getElementById('jumpBtn');
+        dom.exportBtn = document.getElementById('exportBtn');
+        dom.importBtn = document.getElementById('importBtn');
+        dom.importFileInput = document.getElementById('importFileInput');
     }
 
+    // ---------- Utility ----------
     function generateTaskId(weekTitle, dayTitle, taskText) {
         const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
         let hash = 0;
@@ -273,7 +421,7 @@
         };
     }
 
-    // Storage: objects { checked: boolean, values: string[] } per task
+    // ---------- Storage ----------
     function loadTaskStates() {
         try {
             const raw = localStorage.getItem(CONFIG.storageKey);
@@ -308,9 +456,7 @@
         const states = loadTaskStates();
         if (!states[taskId]) states[taskId] = { checked: false, values: [] };
         states[taskId].checked = checked;
-        try {
-            localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
-        } catch (e) {}
+        try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
     }
 
     function setBlankValue(taskId, blankIndex, value) {
@@ -318,23 +464,17 @@
         if (!states[taskId]) states[taskId] = { checked: false, values: [] };
         if (!Array.isArray(states[taskId].values)) states[taskId].values = [];
         states[taskId].values[blankIndex] = value;
-        try {
-            localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
-        } catch (e) {}
+        try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
     }
 
-    // Parser
+    // ---------- Parser ----------
     function parseLessons(markdown) {
         const lines = markdown.split('\n');
         const weeks = [];
-        let currentWeek = null;
-        let currentDay = null;
-        let pendingMetadata = null;
-
+        let currentWeek = null, currentDay = null, pendingMetadata = null;
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const trimmed = line.trim();
-
             if (trimmed === '') {
                 if (pendingMetadata && currentDay) {
                     currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
@@ -345,38 +485,32 @@
                 }
                 continue;
             }
-
             const weekMatch = trimmed.match(/^#{1,2}\s+Week\s+(\d+)\s*$/i);
             if (weekMatch) {
                 if (pendingMetadata && currentWeek) {
                     currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
                     pendingMetadata = null;
                 }
-                const weekNum = parseInt(weekMatch[1], 10);
-                currentWeek = { id: 'week-'+weekNum, title: 'Week '+weekNum, weekNumber: weekNum, metadata: null, days: [] };
+                currentWeek = { id: 'week-'+weekMatch[1], title: 'Week '+weekMatch[1], weekNumber: parseInt(weekMatch[1],10), metadata: null, days: [] };
                 currentDay = null;
                 weeks.push(currentWeek);
                 continue;
             }
-
             const dayMatch = trimmed.match(/^###\s+Day\s+(\d+)\s*$/i);
             if (dayMatch && currentWeek) {
                 if (pendingMetadata && currentDay) {
                     currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
                     pendingMetadata = null;
                 }
-                const dayNum = parseInt(dayMatch[1], 10);
-                currentDay = { id: currentWeek.id+'-day-'+dayNum, title: 'Day '+dayNum, dayNumber: dayNum, metadata: null, tasks: [] };
+                currentDay = { id: currentWeek.id+'-day-'+dayMatch[1], title: 'Day '+dayMatch[1], dayNumber: parseInt(dayMatch[1],10), metadata: null, tasks: [] };
                 currentWeek.days.push(currentDay);
                 continue;
             }
-
             if (trimmed.startsWith('>')) {
                 const metaText = trimmed.replace(/^>\s*/, '').trim();
                 if (metaText) pendingMetadata = metaText;
                 continue;
             }
-
             const taskMatch = trimmed.match(/^-\s+\[(\s|x)\]\s+(.+)$/);
             if (taskMatch && currentDay) {
                 if (pendingMetadata) {
@@ -391,42 +525,37 @@
                 const blankCount = countBlanks(rawText);
                 const taskId = generateTaskId(currentWeek.title, currentDay.title, rawText);
                 currentDay.tasks.push({
-                    id: taskId,
-                    rawText, displayText: rawText,
-                    checked: isChecked,
-                    duration, links, isQuiz: quizFlag,
-                    blankCount
+                    id: taskId, rawText, displayText: rawText,
+                    checked: isChecked, duration, links, isQuiz: quizFlag, blankCount
                 });
                 continue;
             }
-
             if (pendingMetadata && currentDay) {
                 currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
                 pendingMetadata = null;
             }
         }
-        if (pendingMetadata && currentDay) {
-            currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
-        } else if (pendingMetadata && currentWeek && !currentDay) {
-            currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
-        }
+        // Flush any remaining metadata
+        if (pendingMetadata && currentDay) currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
+        else if (pendingMetadata && currentWeek && !currentDay) currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
         return weeks;
     }
 
-    // Rendering
+    // ---------- Rendering ----------
     let collapseState = { weeks: {}, days: {} };
 
     function renderApp(weeksData, savedStates) {
         dom.mainContent.innerHTML = '';
         if (!weeksData || weeksData.length === 0) {
-            dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📭</div><p>No learning schedule data found.</p><p style="font-size:0.85rem;color:var(--text-muted);">Please ensure <code>lessons.md</code> exists and contains valid data.</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
+            dom.mainContent.innerHTML = `<div class="error-state">...</div>`; // simplified
             updateTotalProgress(weeksData, savedStates);
             return;
         }
+        // Initialize collapse: weeks collapsed by default
         weeksData.forEach(week => {
-            if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = true;
+            if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = false;
             week.days.forEach(day => {
-                if (!(day.id in collapseState.days)) collapseState.days[day.id] = true;
+                if (!(day.id in collapseState.days)) collapseState.days[day.id] = true; // days expanded inside opened week
             });
         });
         weeksData.forEach(week => {
@@ -435,10 +564,21 @@
         });
         updateTotalProgress(weeksData, savedStates);
         attachScrollListener();
+        // Build reverse map for export/import fallback
+        buildFallbackMap(weeksData);
+    }
+
+    function buildFallbackMap(weeksData) {
+        const map = {};
+        weeksData.forEach(week => week.days.forEach(day => day.tasks.forEach(task => {
+            const key = `${week.title}||${day.title}||${task.rawText.substring(0, 100)}`;
+            map[key] = task.id;
+        })));
+        window._fallbackMap = map;
     }
 
     function buildWeekElement(week, savedStates) {
-        const isExpanded = collapseState.weeks[week.id] !== false;
+        const isExpanded = collapseState.weeks[week.id] === true;
         const wp = calculateProgress(week, savedStates);
         const card = document.createElement('div');
         card.className = 'week-card' + (isExpanded ? ' expanded' : '');
@@ -449,7 +589,7 @@
         html += '<span class="week-progress-badge'+(wp.percent>=100?' complete':'')+'">'+wp.completed+'/'+wp.total+' done</span>';
         html += '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         html += '</div>';
-        if (week.metadata) html += '<div class="week-metadata">'+escapeHtml(week.metadata)+'</div>';
+        // No week metadata rendering
         html += '<div class="week-body-wrapper"><div class="week-body-inner"><div class="week-body-content">';
         week.days.forEach(day => { html += buildDayHtml(day, savedStates); });
         html += '</div></div></div>';
@@ -469,7 +609,7 @@
         html += '</div>';
         html += '<div class="day-body-wrapper"><div class="day-body-inner"><div class="day-body-content">';
         day.tasks.forEach(task => { html += buildTaskHtml(task, savedStates); });
-        if (day.metadata) html += '<div class="day-metadata">'+escapeHtml(day.metadata)+'</div>';
+        // No day metadata rendering
         html += '</div></div></div></div>';
         return html;
     }
@@ -478,8 +618,7 @@
         const state = savedStates[task.id] || { checked: task.checked, values: [] };
         const isChecked = state.checked;
         const savedValues = state.values || [];
-        let displayText = task.displayText;
-        const blankSegments = displayText.split(/_{2,}/);
+        const blankSegments = task.displayText.split(/_{2,}/);
         let textHtml = '';
         blankSegments.forEach((seg, idx) => {
             textHtml += convertMarkdownLinksToHtml(escapeHtml(seg));
@@ -488,7 +627,6 @@
                 textHtml += `<input class="fillable-input" data-blank-index="${idx}" data-task-id="${task.id}" placeholder="%" value="${escapeHtml(value)}">`;
             }
         });
-
         let html = '<div class="task-item'+(isChecked?' completed':'')+'" data-task-id="'+task.id+'">';
         html += '<span class="task-checkbox-wrap"><input type="checkbox" class="task-checkbox" data-task-id="'+task.id+'" '+(isChecked?'checked':'')+'></span>';
         html += '<div class="task-content"><span class="task-text">'+textHtml+'</span>';
@@ -561,6 +699,7 @@
         refreshAllProgress();
     }
 
+    // ---------- Progress ----------
     function calculateProgress(week, savedStates) {
         let total=0, completed=0;
         week.days.forEach(day => {
@@ -570,7 +709,7 @@
                 if (state.checked) completed++;
             });
         });
-        return { total, completed, percent: total>0?Math.round(completed/total*100):0 };
+        return { total, completed, percent: total>0 ? (completed/total)*100 : 0 }; // not rounded
     }
 
     function calculateDayProgress(day, savedStates) {
@@ -580,7 +719,7 @@
             const state = savedStates[task.id] || { checked: task.checked };
             if (state.checked) completed++;
         });
-        return { total, completed, percent: total>0?Math.round(completed/total*100):0 };
+        return { total, completed, percent: total>0 ? (completed/total)*100 : 0 };
     }
 
     function updateTotalProgress(weeksData, savedStates) {
@@ -591,9 +730,9 @@
                 total += wp.total; completed += wp.completed;
             });
         }
-        const percent = total>0?Math.round(completed/total*100):0;
-        dom.totalProgressBar.style.width = percent+'%';
-        dom.totalProgressLabel.textContent = percent+'%';
+        const percent = total>0 ? (completed/total)*100 : 0;
+        dom.totalProgressBar.style.width = percent + '%';
+        dom.totalProgressLabel.textContent = percent.toFixed(2) + '%';
         dom.totalProgressSection.style.display = total>0?'flex':'none';
     }
 
@@ -609,7 +748,7 @@
             const badge = card.querySelector('.week-progress-badge');
             if (badge) {
                 badge.textContent = wp.completed+'/'+wp.total+' done';
-                badge.classList.toggle('complete', wp.percent>=100);
+                badge.classList.toggle('complete', wp.completed===wp.total);
             }
             week.days.forEach(day => {
                 const sec = card.querySelector('[data-day-id="'+day.id+'"]');
@@ -619,13 +758,126 @@
                 const dot = sec.querySelector('.day-dot');
                 if (mini) {
                     mini.textContent = dp.completed+'/'+dp.total;
-                    mini.classList.toggle('complete', dp.percent>=100);
+                    mini.classList.toggle('complete', dp.completed===dp.total);
                 }
-                if (dot) dot.classList.toggle('complete', dp.percent>=100);
+                if (dot) dot.classList.toggle('complete', dp.completed===dp.total);
             });
         });
     }
 
+    // ---------- Jump to current week ----------
+    function jumpToCurrentWeek() {
+        const weeksData = window._currentWeeksData;
+        const states = loadTaskStates();
+        if (!weeksData) return;
+        // Find first week with progress < 100%
+        const firstIncomplete = weeksData.find(week => calculateProgress(week, states).completed < calculateProgress(week, states).total);
+        const targetWeekId = firstIncomplete ? firstIncomplete.id : weeksData[weeksData.length-1].id;
+        // Collapse all weeks, expand only target
+        weeksData.forEach(week => {
+            const card = document.querySelector('[data-week-id="'+week.id+'"]');
+            if (!card) return;
+            if (week.id === targetWeekId) {
+                card.classList.add('expanded');
+                collapseState.weeks[week.id] = true;
+            } else {
+                card.classList.remove('expanded');
+                collapseState.weeks[week.id] = false;
+            }
+        });
+        // Scroll to target
+        const targetCard = document.querySelector('[data-week-id="'+targetWeekId+'"]');
+        if (targetCard) {
+            targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // ---------- Dark mode ----------
+    function applyTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            dom.themeIcon.textContent = '☀️';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            dom.themeIcon.textContent = '🌙';
+        }
+    }
+
+    function toggleTheme() {
+        if (document.documentElement.hasAttribute('data-theme')) {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            dom.themeIcon.textContent = '🌙';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            dom.themeIcon.textContent = '☀️';
+        }
+    }
+
+    // ---------- Export / Import ----------
+    function exportProgress() {
+        const states = loadTaskStates();
+        const weeksData = window._currentWeeksData;
+        const fallbackMap = window._fallbackMap || {};
+        const exportData = { version: 1, tasks: {} };
+        for (const [taskId, state] of Object.entries(states)) {
+            // Find the task's fallback key by reverse lookup (taskId → fallback key)
+            let fallbackKey = '';
+            for (const [key, id] of Object.entries(fallbackMap)) {
+                if (id === taskId) { fallbackKey = key; break; }
+            }
+            exportData.tasks[taskId] = {
+                checked: state.checked,
+                values: state.values || [],
+                fallbackKey: fallbackKey
+            };
+        }
+        const dateStr = new Date().toISOString().slice(0,10);
+        const filename = `hebrew-progress-${dateStr}.json`;
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importProgress(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (!data.tasks) throw new Error('Invalid format');
+                const states = loadTaskStates();
+                const fallbackMap = window._fallbackMap || {};
+                for (const [oldId, taskState] of Object.entries(data.tasks)) {
+                    let targetId = oldId;
+                    // Direct match
+                    if (!(targetId in states) && taskState.fallbackKey && fallbackMap[taskState.fallbackKey]) {
+                        targetId = fallbackMap[taskState.fallbackKey];
+                    }
+                    if (targetId) {
+                        states[targetId] = {
+                            checked: taskState.checked,
+                            values: taskState.values || []
+                        };
+                    }
+                }
+                saveTaskStates(states);
+                renderApp(window._currentWeeksData, states);
+                alert('Progress imported successfully.');
+            } catch (err) {
+                alert('Failed to import progress. The file may be corrupted.');
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // ---------- Scroll listener ----------
     function attachScrollListener() {
         let ticking = false;
         window.addEventListener('scroll', () => {
@@ -639,6 +891,7 @@
         }, { passive: true });
     }
 
+    // ---------- Network & SW ----------
     async function fetchLessonsMarkdown() {
         const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
         if (!resp.ok) throw new Error('Failed to fetch lessons.md');
@@ -660,9 +913,6 @@
     async function registerServiceWorker() {
         if (!('serviceWorker' in navigator)) { updateSyncStatus(isOnline()?'online':'offline'); return; }
         try {
-            // `updateViaCache: 'none'` ensures the browser always fetches sw.js from the network,
-            // ignoring HTTP cache headers. This way, changing only the CACHE_NAME inside sw.js
-            // triggers an immediate update on the first refresh. No other changes needed.
             const reg = await navigator.serviceWorker.register('./sw.js', {
                 scope: './',
                 updateViaCache: 'none'
@@ -678,8 +928,10 @@
         } catch(e) { console.error('SW reg failed', e); updateSyncStatus(isOnline()?'online':'offline'); }
     }
 
+    // ---------- Init ----------
     async function initApp() {
         cacheDomReferences();
+        applyTheme();
         updateSyncStatus('syncing');
         const swPromise = registerServiceWorker();
         const savedStates = loadTaskStates();
@@ -698,6 +950,7 @@
         await swPromise;
     }
 
+    // Event listeners
     window.addEventListener('online', () => {
         updateSyncStatus('online');
         fetchLessonsMarkdown().then(md => {
@@ -712,6 +965,22 @@
 
     navigator.serviceWorker?.addEventListener('message', (e) => {
         if (e.data?.type==='CACHE_UPDATED') console.log('Cache updated:', e.data.url);
+    });
+
+    // Theme toggle
+    dom.themeToggleBtn.addEventListener('click', toggleTheme);
+
+    // Jump button
+    dom.jumpBtn.addEventListener('click', jumpToCurrentWeek);
+
+    // Export / Import
+    dom.exportBtn.addEventListener('click', exportProgress);
+    dom.importBtn.addEventListener('click', () => dom.importFileInput.click());
+    dom.importFileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            importProgress(e.target.files[0]);
+            e.target.value = ''; // allow re-import of same file
+        }
     });
 
     if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', initApp);
