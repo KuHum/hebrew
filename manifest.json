@@ -7,6 +7,7 @@
   "orientation": "any",
   "background_color": "#f5f3ef",
   "theme_color": "#4a7c8c",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "./icons/icon-192.png",
