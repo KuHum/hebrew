@@ -206,7 +206,7 @@
 (function() {
     const CONFIG = {
         lessonsFile: './lessons.md',
-        storageKey: 'aleph-beth-task-states',  // now stores objects { checked, values }
+        storageKey: 'aleph-beth-task-states',
         cacheName: 'aleph-beth-v1',
         debounceMs: 300,
     };
@@ -260,7 +260,6 @@
         return /quiz|i got\s*_+%/i.test(text);
     }
 
-    // Count blanks (_____) in a task text to create fillable fields
     function countBlanks(text) {
         const matches = text.match(/_{2,}/g);
         return matches ? matches.length : 0;
@@ -274,22 +273,19 @@
         };
     }
 
-    // Storage: now saves objects { checked: boolean, values: string[] } per task
+    // Storage: objects { checked: boolean, values: string[] } per task
     function loadTaskStates() {
         try {
             const raw = localStorage.getItem(CONFIG.storageKey);
             if (!raw) return {};
             const data = JSON.parse(raw);
-            // Migrate old format (just boolean) to new format
             const migrated = {};
             for (const [id, val] of Object.entries(data)) {
                 if (typeof val === 'boolean') {
                     migrated[id] = { checked: val, values: [] };
                 } else if (val && typeof val.checked === 'boolean') {
-                    // ensure values is an array
                     migrated[id] = { checked: val.checked, values: Array.isArray(val.values) ? val.values : [] };
                 } else {
-                    // fallback
                     migrated[id] = { checked: false, values: [] };
                 }
             }
@@ -483,14 +479,12 @@
         const isChecked = state.checked;
         const savedValues = state.values || [];
         let displayText = task.displayText;
-        // Split by blanks (_____)
         const blankSegments = displayText.split(/_{2,}/);
         let textHtml = '';
         blankSegments.forEach((seg, idx) => {
             textHtml += convertMarkdownLinksToHtml(escapeHtml(seg));
             if (idx < blankSegments.length - 1) {
                 const value = savedValues[idx] || '';
-                // Create an inline input for the blank
                 textHtml += `<input class="fillable-input" data-blank-index="${idx}" data-task-id="${task.id}" placeholder="%" value="${escapeHtml(value)}">`;
             }
         });
@@ -531,15 +525,9 @@
         card.querySelectorAll('.task-checkbox').forEach(cb => {
             cb.addEventListener('change', function() { handleCheckboxChange(cb); });
         });
-        // Listen for fillable input changes
         card.querySelectorAll('.fillable-input').forEach(inp => {
-            inp.addEventListener('input', function() {
-                handleBlankInput(inp);
-            });
-            // also handle change for paste etc.
-            inp.addEventListener('change', function() {
-                handleBlankInput(inp);
-            });
+            inp.addEventListener('input', function() { handleBlankInput(inp); });
+            inp.addEventListener('change', function() { handleBlankInput(inp); });
         });
     }
 
@@ -672,7 +660,13 @@
     async function registerServiceWorker() {
         if (!('serviceWorker' in navigator)) { updateSyncStatus(isOnline()?'online':'offline'); return; }
         try {
-            const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+            // `updateViaCache: 'none'` ensures the browser always fetches sw.js from the network,
+            // ignoring HTTP cache headers. This way, changing only the CACHE_NAME inside sw.js
+            // triggers an immediate update on the first refresh. No other changes needed.
+            const reg = await navigator.serviceWorker.register('./sw.js', {
+                scope: './',
+                updateViaCache: 'none'
+            });
             reg.addEventListener('updatefound', () => {
                 const newWorker = reg.installing;
                 newWorker?.addEventListener('statechange', () => {
