@@ -7,7 +7,7 @@
 //   - Automatic cache cleanup on activation
 // ============================================================
 
-const CACHE_NAME = 'aleph-beth-v2';
+const CACHE_NAME = 'aleph-beth-v3';
 
 // Files that should be cached on install (app shell)
 const STATIC_ASSETS = [
