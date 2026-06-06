@@ -1,7 +1,7 @@
 {
-  "name": "Learn Hebrew with Beth",
+  "name": "Learn Biblical Hebrew",
   "short_name": "Learn Hebrew",
-  "description": "Offline-first tracker for the Aleph with Beth Hebrew learning schedule",
+  "description": "Offline-first tracker for the Learn Biblical Hebrew schedule",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
