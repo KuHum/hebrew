@@ -7,9 +7,7 @@
     <meta name="description" content="Offline-first tracker for the Learn Biblical Hebrew schedule">
     <title>Learn Biblical Hebrew</title>
     <link rel="manifest" href="./manifest.json">
-    <!-- Favicon (SVG) for browser tabs -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234a7c8c' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' fill='white' font-size='50' font-family='serif'>א</text></svg>" type="image/svg+xml">
-    <!-- Apple touch icon (PNG) for iOS homescreen -->
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
     <style>
         :root {
@@ -56,14 +54,13 @@
         }
         .app-container { max-width: var(--max-width); margin: 0 auto; padding: 16px 16px 40px; }
 
-        /* ── Centered header (Option A) – STATIC, no sticky ── */
+        /* ── Centered header (static) ── */
         .app-header {
             background: var(--bg);
             padding: 20px 0 12px;
             text-align: center;
             border-bottom: 1px solid var(--divider);
         }
-
         .header-icon {
             display: inline-flex; align-items: center; justify-content: center;
             width: 56px; height: 56px; background: var(--accent); color: #fff;
@@ -100,16 +97,24 @@
             font-style: italic;
         }
 
-        .jump-btn {
+        /* Install button */
+        .install-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 1000;
             width: 48px; height: 48px; border-radius: 50%;
-            background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-            border: 1px solid var(--card-border);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: var(--accent);
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+            background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: none; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-smooth);
         }
-        .jump-btn:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+        .install-btn:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+        .install-btn.hidden { opacity: 0; pointer-events: none; }
+
+        /* Progress ring styles */
+        .week-progress-ring, .day-progress-ring {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .week-progress-ring svg, .day-progress-ring svg {
+            flex-shrink: 0;
+        }
 
         .week-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); box-shadow: var(--card-shadow); margin-bottom: 16px; overflow: hidden; transition: box-shadow var(--transition-smooth); }
         .week-card:hover { box-shadow: var(--card-shadow-hover); }
@@ -118,8 +123,6 @@
         .week-title-group { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
         .week-icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light); color: var(--accent); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
         .week-title { font-size: 1.05rem; font-weight: 600; }
-        .week-progress-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: var(--accent-light); padding: 4px 10px; border-radius: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
-        .week-progress-badge.complete { background: var(--success-light); color: var(--success); }
         .week-chevron { width: 22px; height: 22px; color: var(--text-muted); transition: transform var(--transition-smooth); flex-shrink: 0; }
         .week-card.expanded .week-chevron { transform: rotate(180deg); }
         .week-body-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--transition-smooth); }
@@ -132,11 +135,7 @@
         .day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: var(--accent-light); gap: 8px; transition: background var(--transition-fast); }
         .day-header:hover { background: var(--card-border); }
         .day-title-group { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .day-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); transition: background var(--transition-fast); }
-        .day-dot.complete { background: var(--success); }
         .day-title { font-size: 0.9rem; font-weight: 600; }
-        .day-progress-mini { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); font-family: var(--font-mono); }
-        .day-progress-mini.complete { color: var(--success); }
         .day-chevron { width: 18px; height: 18px; color: var(--text-muted); transition: transform var(--transition-smooth); flex-shrink: 0; }
         .day-section.expanded .day-chevron { transform: rotate(180deg); }
         .day-body-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--transition-smooth); }
@@ -179,7 +178,7 @@
         }
         .fillable-input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
 
-        /* ── Footer ──────────────────────────── */
+        /* Footer */
         .app-footer {
             margin-top: 24px;
             padding: 0 0 20px;
@@ -198,41 +197,35 @@
             font-size: 0.75rem; padding: 6px 14px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-sm);
-            background: var(--card-bg); color: var(--text-secondary);
+            background: var(--card-bg); color: var(--accent);
             cursor: pointer; transition: all var(--transition-fast);
-            white-space: nowrap;
+            white-space: nowrap; display: flex; align-items: center; gap: 6px;
         }
-        .tool-btn:hover { background: var(--accent-light); color: var(--text-primary); }
+        .tool-btn:hover { background: var(--accent-light); color: var(--accent-dark); }
+        .tool-btn svg { width: 16px; height: 16px; }
 
         .footer-divider {
             display: flex; align-items: center; gap: 10px;
             margin: 20px 0 16px;
         }
-        .footer-divider-line {
-            flex: 1; height: 1px; background: var(--divider);
-        }
-        .footer-divider-ornament {
-            color: var(--text-muted); font-size: 1rem;
-        }
-        .footer-church {
-            font-size: 0.72rem; margin-bottom: 2px;
-        }
+        .footer-divider-line { flex: 1; height: 1px; background: var(--divider); }
+        .footer-divider-ornament { color: var(--text-muted); font-size: 1rem; }
+        .footer-church { font-size: 0.72rem; margin-bottom: 2px; }
         .footer-church a { color: var(--accent); text-decoration: underline; }
         .app-footer a { color: var(--link-color); text-decoration: underline; }
-        .footer-soli {
-            font-size: 0.72rem; font-weight: 500; margin-top: 6px;
-            color: var(--text-secondary);
-        }
+        .footer-soli { font-size: 0.72rem; font-weight: 500; margin-top: 6px; color: var(--text-secondary); }
         .footer-read-more {
             margin-top: 12px;
             background: none; border: 1px solid var(--card-border);
             padding: 6px 16px; border-radius: 20px;
             cursor: pointer; font-size: 0.7rem;
-            color: var(--text-secondary); transition: all var(--transition-fast);
+            color: var(--accent); transition: all var(--transition-fast);
+            display: inline-flex; align-items: center; gap: 6px;
         }
-        .footer-read-more:hover { background: var(--accent-light); color: var(--accent); }
+        .footer-read-more:hover { background: var(--accent-light); color: var(--accent-dark); }
+        .footer-read-more svg { width: 14px; height: 14px; }
 
-        /* ── Overlay ─────────────────────────── */
+        /* Overlay */
         .overlay-backdrop {
             position: fixed; inset: 0; z-index: 2000;
             background: rgba(0,0,0,0.4); display: none;
@@ -245,8 +238,7 @@
             max-width: 500px; width: 100%; max-height: 90vh;
             overflow-y: auto; padding: 24px;
             box-shadow: var(--card-shadow-hover);
-            position: relative;
-            color: var(--text-primary);
+            position: relative; color: var(--text-primary);
         }
         .overlay-close-btn {
             position: absolute; top: 12px; right: 14px;
@@ -256,28 +248,14 @@
         }
         .overlay-close-btn:hover { background: var(--accent-light); }
         .overlay-panel h2 { font-size: 1.3rem; margin-bottom: 6px; }
-        .overlay-version {
-            font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;
-        }
-        .overlay-panel h3 {
-            font-size: 0.9rem; margin-top: 16px; margin-bottom: 6px;
-            color: var(--text-secondary);
-        }
+        .overlay-version { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; }
+        .overlay-panel h3 { font-size: 0.9rem; margin-top: 16px; margin-bottom: 6px; color: var(--text-secondary); }
         .overlay-panel p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 8px; }
         .overlay-panel a { color: var(--accent); text-decoration: underline; }
-        .overlay-divider {
-            display: flex; align-items: center; gap: 10px;
-            margin: 16px 0 12px;
-        }
+        .overlay-divider { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; }
         .overlay-divider-line { flex: 1; height: 1px; background: var(--divider); }
-        .overlay-divider-dot {
-            width: 6px; height: 6px; background: var(--divider);
-            border-radius: 50%;
-        }
-        .overlay-soli {
-            text-align: center; font-size: 0.82rem; font-weight: 500;
-            margin-top: 8px; color: var(--text-secondary);
-        }
+        .overlay-divider-dot { width: 6px; height: 6px; background: var(--divider); border-radius: 50%; }
+        .overlay-soli { text-align: center; font-size: 0.82rem; font-weight: 500; margin-top: 8px; color: var(--text-secondary); }
         .overlay-panel input[type="text"],
         .overlay-panel input[type="email"],
         .overlay-panel textarea {
@@ -289,9 +267,7 @@
             margin-bottom: 10px;
         }
         .overlay-panel input:focus,
-        .overlay-panel textarea:focus {
-            outline: none; border-color: var(--accent);
-        }
+        .overlay-panel textarea:focus { outline: none; border-color: var(--accent); }
         .btn-primary {
             background: var(--accent); color: #fff;
             border: none; border-radius: var(--radius-sm);
@@ -328,7 +304,6 @@
         <p class="attribution">
             Courtesy of <a href="https://freehebrew.online/" target="_blank" rel="noopener noreferrer">Aleph with Beth</a>
         </p>
-
         <div class="total-progress-section" id="totalProgressSection">
             <div class="total-progress-bar-outer"><div class="total-progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
             <span class="total-progress-label" id="totalProgressLabel">0.00%</span>
@@ -342,8 +317,20 @@
 
     <footer class="app-footer" id="appFooter">
         <div class="footer-tools">
-            <button class="tool-btn" id="exportBtn">📥 Export progress</button>
-            <button class="tool-btn" id="importBtn">📤 Import progress</button>
+            <button class="tool-btn" id="exportBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 15V3M12 3L8 7M12 3l4 4" />
+                    <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+                </svg>
+                Export
+            </button>
+            <button class="tool-btn" id="importBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v12M12 15l-4-4M12 15l4-4" />
+                    <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+                </svg>
+                Import
+            </button>
         </div>
         <div class="footer-divider">
             <div class="footer-divider-line"></div>
@@ -356,14 +343,26 @@
         <p style="margin-top:2px;">Built by <a href="https://kutosi.com" target="_blank" rel="noopener noreferrer">Humphrey Kutosi</a></p>
         <p style="font-size:0.6rem;color:var(--text-faint);margin-top:6px;letter-spacing:0.03em;">v<span id="footerVersion">1.0</span></p>
         <p class="footer-soli">Soli Deo Gloria</p>
-        <button class="footer-read-more" id="readMoreBtn" aria-label="Read more about this app">ℹ️&ensp;About &amp; Contact</button>
+        <button class="footer-read-more" id="readMoreBtn" aria-label="About & Contact">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+                <line x1="12" y1="11" x2="12" y2="15" />
+            </svg>
+            About &amp; Contact
+        </button>
     </footer>
 
-    <button class="jump-btn" id="jumpBtn" title="Jump to current week" aria-label="Jump to current week">
-        <span style="font-size:1.2rem;">📖</span>
+    <!-- Install button (hidden after installation) -->
+    <button class="install-btn hidden" id="installBtn" title="Install app" aria-label="Install app">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+            <path d="M8 1v9M8 10l-3-3M8 10l3-3" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M2 12h12" stroke="#fff" stroke-width="1.7" stroke-linecap="round"></path>
+        </svg>
     </button>
 </div>
 
+<!-- About overlay (same as before) -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -435,7 +434,6 @@
         dom.totalProgressBar = document.getElementById('totalProgressBar');
         dom.totalProgressLabel = document.getElementById('totalProgressLabel');
         dom.totalProgressSection = document.getElementById('totalProgressSection');
-        dom.jumpBtn = document.getElementById('jumpBtn');
         dom.exportBtn = document.getElementById('exportBtn');
         dom.importBtn = document.getElementById('importBtn');
         dom.importFileInput = document.getElementById('importFileInput');
@@ -448,8 +446,10 @@
         dom.feedbackEmail = document.getElementById('feedbackEmail');
         dom.feedbackTextarea = document.getElementById('feedbackTextarea');
         dom.sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
+        dom.installBtn = document.getElementById('installBtn');
     }
 
+    // ---------- Utility ----------
     function generateTaskId(weekTitle, dayTitle, taskText) {
         const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
         let hash = 0;
@@ -498,6 +498,7 @@
         };
     }
 
+    // ---------- Storage ----------
     function loadTaskStates() {
         try {
             const raw = localStorage.getItem(CONFIG.storageKey);
@@ -543,6 +544,7 @@
         try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
     }
 
+    // ---------- Parser ----------
     function parseLessons(markdown) {
         const lines = markdown.split('\n');
         const weeks = [];
@@ -615,6 +617,25 @@
         return weeks;
     }
 
+    // ---------- Progress ring SVG helper ----------
+    function progressRingSVG(percent, size = 24) {
+        const radius = size === 24 ? 9 : 8; // week: 24px -> r=9, day: 20px -> r=8
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference * (1 - Math.min(percent, 100) / 100);
+        const strokeWidth = size === 24 ? 1.8 : 1.6;
+        const complete = percent >= 100;
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="var(--card-border)" stroke-width="${strokeWidth}" />
+                <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="var(--success)" stroke-width="${strokeWidth}"
+                    stroke-dasharray="${circumference.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="round"
+                    transform="rotate(-90 ${size/2} ${size/2})" style="transition: stroke-dashoffset 0.3s ease;" />
+                ${complete ? `<polyline points="${size*0.3},${size*0.55} ${size*0.45},${size*0.7} ${size*0.7},${size*0.4}" fill="none" stroke="var(--success)" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" />` : ''}
+            </svg>
+        `;
+    }
+
+    // ---------- Rendering ----------
     let collapseState = { weeks: {}, days: {} };
 
     function renderApp(weeksData, savedStates) {
@@ -656,7 +677,7 @@
         let html = '';
         html += '<div class="week-header" data-action="toggle-week" data-week-id="'+week.id+'">';
         html += '<div class="week-title-group"><span class="week-icon">'+week.weekNumber+'</span><span class="week-title">'+escapeHtml(week.title)+'</span></div>';
-        html += '<span class="week-progress-badge'+(wp.completed===wp.total?' complete':'')+'">'+wp.completed+'/'+wp.total+' done</span>';
+        html += '<div class="week-progress-ring" title="'+wp.completed+'/'+wp.total+' done">'+progressRingSVG(wp.percent, 24)+'</div>';
         html += '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         html += '</div>';
         html += '<div class="week-body-wrapper"><div class="week-body-inner"><div class="week-body-content">';
@@ -672,8 +693,8 @@
         const dp = calculateDayProgress(day, savedStates);
         let html = '<div class="day-section'+(isExpanded?' expanded':'')+'" data-day-id="'+day.id+'">';
         html += '<div class="day-header" data-action="toggle-day" data-day-id="'+day.id+'">';
-        html += '<div class="day-title-group"><span class="day-dot'+(dp.completed===dp.total?' complete':'')+'"></span><span class="day-title">'+escapeHtml(day.title)+'</span></div>';
-        html += '<span class="day-progress-mini'+(dp.completed===dp.total?' complete':'')+'">'+dp.completed+'/'+dp.total+'</span>';
+        html += '<div class="day-title-group"><span class="day-title">'+escapeHtml(day.title)+'</span></div>';
+        html += '<div class="day-progress-ring" title="'+dp.completed+'/'+dp.total+' done">'+progressRingSVG(dp.percent, 20)+'</div>';
         html += '<svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         html += '</div>';
         html += '<div class="day-body-wrapper"><div class="day-body-inner"><div class="day-body-content">';
@@ -767,6 +788,7 @@
         refreshAllProgress();
     }
 
+    // ---------- Progress ----------
     function calculateProgress(week, savedStates) {
         let total=0, completed=0;
         week.days.forEach(day => {
@@ -812,50 +834,19 @@
             const card = document.querySelector('[data-week-id="'+week.id+'"]');
             if (!card) return;
             const wp = calculateProgress(week, states);
-            const badge = card.querySelector('.week-progress-badge');
-            if (badge) {
-                badge.textContent = wp.completed+'/'+wp.total+' done';
-                badge.classList.toggle('complete', wp.completed===wp.total);
-            }
+            const ringContainer = card.querySelector('.week-progress-ring');
+            if (ringContainer) ringContainer.innerHTML = progressRingSVG(wp.percent, 24);
             week.days.forEach(day => {
                 const sec = card.querySelector('[data-day-id="'+day.id+'"]');
                 if (!sec) return;
                 const dp = calculateDayProgress(day, states);
-                const mini = sec.querySelector('.day-progress-mini');
-                const dot = sec.querySelector('.day-dot');
-                if (mini) {
-                    mini.textContent = dp.completed+'/'+dp.total;
-                    mini.classList.toggle('complete', dp.completed===dp.total);
-                }
-                if (dot) dot.classList.toggle('complete', dp.completed===dp.total);
+                const dayRingContainer = sec.querySelector('.day-progress-ring');
+                if (dayRingContainer) dayRingContainer.innerHTML = progressRingSVG(dp.percent, 20);
             });
         });
     }
 
-    function jumpToCurrentWeek() {
-        const weeksData = window._currentWeeksData;
-        const states = loadTaskStates();
-        if (!weeksData) return;
-        const firstIncomplete = weeksData.find(week => {
-            const p = calculateProgress(week, states);
-            return p.completed < p.total;
-        });
-        const targetWeekId = firstIncomplete ? firstIncomplete.id : weeksData[weeksData.length-1].id;
-        weeksData.forEach(week => {
-            const card = document.querySelector('[data-week-id="'+week.id+'"]');
-            if (!card) return;
-            if (week.id === targetWeekId) {
-                card.classList.add('expanded');
-                collapseState.weeks[week.id] = true;
-            } else {
-                card.classList.remove('expanded');
-                collapseState.weeks[week.id] = false;
-            }
-        });
-        const targetCard = document.querySelector('[data-week-id="'+targetWeekId+'"]');
-        if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
+    // ---------- Export / Import ----------
     function exportProgress() {
         const states = loadTaskStates();
         const fallbackMap = window._fallbackMap || {};
@@ -913,6 +904,7 @@
         reader.readAsText(file);
     }
 
+    // ---------- Version ----------
     async function fetchVersion() {
         try {
             const response = await fetch(CONFIG.versionFile, { headers: { 'Cache-Control': 'no-cache' } });
@@ -928,6 +920,7 @@
         }
     }
 
+    // ---------- Overlay & Feedback ----------
     function openOverlay() {
         dom.aboutOverlay.classList.add('visible');
         dom.aboutOverlay.setAttribute('aria-hidden', 'false');
@@ -978,6 +971,37 @@
         }
     }
 
+    // ---------- Install prompt ----------
+    let deferredPrompt = null;
+    function handleBeforeInstallPrompt(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        dom.installBtn.classList.remove('hidden');
+    }
+
+    async function installApp() {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            dom.installBtn.classList.add('hidden');
+            deferredPrompt = null;
+        }
+    }
+
+    function checkInstalled() {
+        // If already installed (standalone display mode), hide button
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            dom.installBtn.classList.add('hidden');
+        }
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', () => {
+        dom.installBtn.classList.add('hidden');
+    });
+
+    // ---------- Network ----------
     async function fetchLessonsMarkdown() {
         const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
         if (!resp.ok) throw new Error('Failed to fetch lessons.md');
@@ -1001,8 +1025,10 @@
         } catch(e) { console.error('SW reg failed', e); }
     }
 
+    // ---------- Init ----------
     async function initApp() {
         cacheDomReferences();
+        checkInstalled();
         fetchVersion();
         const swPromise = registerServiceWorker();
         const savedStates = loadTaskStates();
@@ -1020,7 +1046,6 @@
     }
 
     function attachGlobalEventListeners() {
-        dom.jumpBtn.addEventListener('click', jumpToCurrentWeek);
         dom.exportBtn.addEventListener('click', exportProgress);
         dom.importBtn.addEventListener('click', () => dom.importFileInput.click());
         dom.importFileInput.addEventListener('change', (e) => {
@@ -1035,6 +1060,7 @@
             if (e.target === dom.aboutOverlay) closeOverlay();
         });
         dom.sendFeedbackBtn.addEventListener('click', sendFeedback);
+        dom.installBtn.addEventListener('click', installApp);
     }
 
     window.addEventListener('online', () => {
