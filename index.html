@@ -53,14 +53,13 @@
         }
         .app-container { max-width: var(--max-width); margin: 0 auto; padding: 16px 16px 40px; }
 
-        /* ── Centered header (Option A) ── */
+        /* ── Centered header (Option A) – STATIC, no sticky ── */
         .app-header {
-            position: sticky; top: 0; z-index: 100; background: var(--bg);
-            padding: 20px 0 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            border-bottom: 1px solid transparent; transition: border-color var(--transition-fast);
+            background: var(--bg);
+            padding: 20px 0 12px;
             text-align: center;
+            border-bottom: 1px solid var(--divider); /* subtle separator */
         }
-        .app-header.scrolled { border-bottom-color: var(--card-border); }
 
         .header-icon {
             display: inline-flex; align-items: center; justify-content: center;
@@ -77,18 +76,6 @@
             margin-bottom: 12px; line-height: 1.4;
         }
         .attribution a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-
-        /* Sync status – top right corner */
-        .sync-status {
-            position: absolute; top: 16px; right: 16px;
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.7rem; color: var(--text-muted);
-            white-space: nowrap;
-        }
-        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; transition: background var(--transition-fast); }
-        .sync-dot.offline { background: #d4a76a; }
-        .sync-dot.syncing { background: #4a7c8c; animation: pulse 1s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.4;} }
 
         .total-progress-section { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
         .total-progress-bar-outer { flex: 1; height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
@@ -228,7 +215,7 @@
             font-size: 0.72rem; margin-bottom: 2px;
         }
         .footer-church a { color: var(--accent); text-decoration: underline; }
-        .app-footer a { color: var(--link-color); text-decoration: underline; } /* all footer links */
+        .app-footer a { color: var(--link-color); text-decoration: underline; }
         .footer-soli {
             font-size: 0.72rem; font-weight: 500; margin-top: 6px;
             color: var(--text-secondary);
@@ -323,7 +310,7 @@
         }
         @media print {
             body { background:#fff; }
-            .app-header { position:static; border-bottom:1px solid #ccc; }
+            .app-header { border-bottom:1px solid #ccc; }
             .week-card { box-shadow:none; border:1px solid #ddd; break-inside:avoid; }
             .week-body-wrapper { grid-template-rows:1fr!important; }
             .day-body-wrapper { grid-template-rows:1fr!important; }
@@ -333,12 +320,6 @@
 <body>
 <div class="app-container" id="appContainer">
     <header class="app-header" id="appHeader">
-        <!-- Sync status – top right corner -->
-        <span class="sync-status" id="syncStatus">
-            <span class="sync-dot" id="syncDot"></span>
-            <span id="syncLabel">Ready</span>
-        </span>
-
         <!-- Centered icon + title -->
         <div class="header-icon">א</div>
         <h1 class="app-title">Learn Biblical Hebrew</h1>
@@ -357,7 +338,7 @@
         <div class="loading-state" id="loadingState"><div class="loading-spinner"></div><p>Loading your learning schedule&hellip;</p></div>
     </main>
 
-    <!-- FOOTER with export/import, credits, and about button -->
+    <!-- FOOTER -->
     <footer class="app-footer" id="appFooter">
         <div class="footer-tools">
             <button class="tool-btn" id="exportBtn">📥 Export progress</button>
@@ -377,13 +358,13 @@
         <button class="footer-read-more" id="readMoreBtn" aria-label="Read more about this app">ℹ️&ensp;About &amp; Contact</button>
     </footer>
 
-    <!-- Floating jump button (icon changed to open book) -->
+    <!-- Floating jump button -->
     <button class="jump-btn" id="jumpBtn" title="Jump to current week" aria-label="Jump to current week">
         <span style="font-size:1.2rem;">📖</span>
     </button>
 </div>
 
-<!-- ── ABOUT & CONTACT OVERLAY ────────────────────────────────────── -->
+<!-- ── ABOUT & CONTACT OVERLAY ── -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -450,14 +431,10 @@
     let dom = {};
     function cacheDomReferences() {
         dom.appContainer = document.getElementById('appContainer');
-        dom.appHeader = document.getElementById('appHeader');
         dom.mainContent = document.getElementById('mainContent');
         dom.loadingState = document.getElementById('loadingState');
         dom.totalProgressBar = document.getElementById('totalProgressBar');
         dom.totalProgressLabel = document.getElementById('totalProgressLabel');
-        dom.syncDot = document.getElementById('syncDot');
-        dom.syncLabel = document.getElementById('syncLabel');
-        dom.syncStatus = document.getElementById('syncStatus');
         dom.totalProgressSection = document.getElementById('totalProgressSection');
         dom.jumpBtn = document.getElementById('jumpBtn');
         dom.exportBtn = document.getElementById('exportBtn');
@@ -655,7 +632,7 @@
         weeksData.forEach(week => {
             if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = false;
             week.days.forEach(day => {
-                if (!(day.id in collapseState.days)) collapseState.days[day.id] = false;  // days collapsed by default
+                if (!(day.id in collapseState.days)) collapseState.days[day.id] = false;
             });
         });
         weeksData.forEach(week => {
@@ -663,7 +640,6 @@
             dom.mainContent.appendChild(el);
         });
         updateTotalProgress(weeksData, savedStates);
-        attachScrollListener();
         buildFallbackMap(weeksData);
     }
 
@@ -1012,20 +988,6 @@
         }
     }
 
-    // ---------- Scroll ----------
-    function attachScrollListener() {
-        let ticking = false;
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    dom.appHeader.classList.toggle('scrolled', window.scrollY > 8);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }, { passive: true });
-    }
-
     // ---------- Network ----------
     async function fetchLessonsMarkdown() {
         const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
@@ -1033,20 +995,8 @@
         return await resp.text();
     }
 
-    function updateSyncStatus(status) {
-        const dot = dom.syncDot;
-        dot.classList.remove('offline','syncing');
-        switch (status) {
-            case 'online': dot.style.background='var(--success)'; dom.syncLabel.textContent='Online'; break;
-            case 'offline': dot.classList.add('offline'); dom.syncLabel.textContent='Offline'; break;
-            case 'syncing': dot.classList.add('syncing'); dom.syncLabel.textContent='Syncing…'; break;
-        }
-    }
-
-    function isOnline() { return navigator.onLine !== false; }
-
     async function registerServiceWorker() {
-        if (!('serviceWorker' in navigator)) { updateSyncStatus(isOnline()?'online':'offline'); return; }
+        if (!('serviceWorker' in navigator)) return;
         try {
             const reg = await navigator.serviceWorker.register('./sw.js', {
                 scope: './',
@@ -1059,15 +1009,13 @@
                 });
             });
             if (reg.waiting) reg.waiting.postMessage({ type:'SKIP_WAITING' });
-            updateSyncStatus(isOnline()?'online':'offline');
-        } catch(e) { console.error('SW reg failed', e); updateSyncStatus(isOnline()?'online':'offline'); }
+        } catch(e) { console.error('SW reg failed', e); }
     }
 
     // ---------- Init ----------
     async function initApp() {
         cacheDomReferences();
         fetchVersion();
-        updateSyncStatus('syncing');
         const swPromise = registerServiceWorker();
         const savedStates = loadTaskStates();
         try {
@@ -1075,12 +1023,10 @@
             const weeksData = parseLessons(md);
             window._currentWeeksData = weeksData;
             renderApp(weeksData, savedStates);
-            updateSyncStatus(isOnline()?'online':'offline');
         } catch(err) {
             console.error('Failed to load lessons:', err);
-            dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📡</div><p>Unable to load schedule.</p><p style="font-size:0.85rem;color:var(--text-muted);">${isOnline()?'<code>lessons.md</code> missing?':'Offline and no cache. Connect and retry.'}</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
+            dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📡</div><p>Unable to load schedule.</p><p style="font-size:0.85rem;color:var(--text-muted);">${navigator.onLine?'<code>lessons.md</code> missing?':'Offline and no cache. Connect and retry.'}</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
             updateTotalProgress(null, savedStates);
-            updateSyncStatus(isOnline()?'online':'offline');
         }
         await swPromise;
     }
@@ -1104,7 +1050,6 @@
     }
 
     window.addEventListener('online', () => {
-        updateSyncStatus('online');
         fetchLessonsMarkdown().then(md => {
             const weeksData = parseLessons(md);
             if (JSON.stringify(weeksData) !== JSON.stringify(window._currentWeeksData)) {
@@ -1112,11 +1057,6 @@
                 renderApp(weeksData, loadTaskStates());
             }
         }).catch(() => {});
-    });
-    window.addEventListener('offline', () => updateSyncStatus('offline'));
-
-    navigator.serviceWorker?.addEventListener('message', (e) => {
-        if (e.data?.type==='CACHE_UPDATED') console.log('Cache updated:', e.data.url);
     });
 
     if (document.readyState === 'loading') {
