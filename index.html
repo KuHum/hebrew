@@ -6,29 +6,15 @@
     <meta name="theme-color" content="#f5f3ef">
     <meta name="description" content="Offline-first tracker for the Aleph with Beth Hebrew learning schedule">
     <title>Aleph with Beth Tracker</title>
-
-    <!-- ============================
-    MANIFEST - PWA Installation
-    ============================ -->
     <link rel="manifest" href="./manifest.json">
-
-    <!-- ============================
-    APPLE TOUCH ICON (placeholder)
-    ============================ -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234a7c8c' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' fill='white' font-size='50' font-family='serif'>א</text></svg>">
-
     <style>
-        /* ============================
-           CSS CUSTOM PROPERTIES
-           Centralized design tokens for
-           consistent, maintainable theming
-           ============================ */
         :root {
             --bg: #f5f3ef;
             --card-bg: #ffffff;
             --card-border: #e8e4dd;
-            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
             --text-primary: #1e1e1e;
             --text-secondary: #6b6b6b;
             --text-muted: #9a9a9a;
@@ -47,1841 +33,696 @@
             --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
             --transition-fast: 150ms ease;
-            --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 300ms cubic-bezier(0.4,0,0.2,1);
             --max-width: 720px;
+            --input-bg: #faf9f7;
+            --input-border: #d0ccc4;
+            --input-focus: #4a7c8c;
         }
 
-        /* ============================
-           GLOBAL RESET & BASE STYLES
-           ============================ */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; -webkit-font-smoothing: antialiased; }
         body {
             font-family: var(--font-sans);
             background-color: var(--bg);
             color: var(--text-primary);
             line-height: 1.6;
-            min-height: 100vh;
-            min-height: 100dvh;
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            min-height: 100vh; min-height: 100dvh;
+            padding-bottom: env(safe-area-inset-bottom,20px);
         }
-
-        /* ============================
-           APP SHELL LAYOUT
-           ============================ */
-        .app-container {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 16px 16px 40px;
-        }
-
-        /* ============================
-           HEADER
-           ============================ */
+        .app-container { max-width: var(--max-width); margin: 0 auto; padding: 16px 16px 40px; }
         .app-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--bg);
-            padding: 16px 0 10px;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-bottom: 1px solid transparent;
-            transition: border-color var(--transition-fast);
+            position: sticky; top: 0; z-index: 100; background: var(--bg);
+            padding: 16px 0 10px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid transparent; transition: border-color var(--transition-fast);
         }
-
-        .app-header.scrolled {
-            border-bottom-color: var(--card-border);
-        }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .app-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            line-height: 1.2;
-        }
-
+        .app-header.scrolled { border-bottom-color: var(--card-border); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .app-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
         .app-title .hebrew-char {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            color: #fff;
-            border-radius: var(--radius-sm);
-            font-size: 1.4rem;
-            font-weight: 500;
-            flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; background: var(--accent); color: #fff;
+            border-radius: var(--radius-sm); font-size: 1.4rem; font-weight: 500; flex-shrink: 0;
         }
+        .sync-status { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; transition: background var(--transition-fast); }
+        .sync-dot.offline { background: #d4a76a; }
+        .sync-dot.syncing { background: #4a7c8c; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.4;} }
+        .total-progress-section { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+        .total-progress-bar-outer { flex: 1; height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
+        .total-progress-bar-inner { height: 100%; background: var(--success); border-radius: 3px; transition: width var(--transition-smooth); width: 0%; }
+        .total-progress-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+        .main-content { margin-top: 12px; }
+        .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
+        .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--card-border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { to{transform:rotate(360deg);} }
+        .error-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
+        .retry-btn { margin-top: 16px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast); }
+        .retry-btn:hover { background: var(--accent-dark); }
 
-        /* Sync status indicator */
-        .sync-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
+        .week-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); box-shadow: var(--card-shadow); margin-bottom: 16px; overflow: hidden; transition: box-shadow var(--transition-smooth); }
+        .week-card:hover { box-shadow: var(--card-shadow-hover); }
+        .week-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; gap: 12px; transition: background var(--transition-fast); }
+        .week-header:hover { background: #fafaf8; }
+        .week-title-group { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .week-icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light); color: var(--accent); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+        .week-title { font-size: 1.05rem; font-weight: 600; }
+        .week-progress-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: #f8f7f5; padding: 4px 10px; border-radius: 20px; white-space: nowrap; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+        .week-progress-badge.complete { background: var(--success-light); color: var(--success); }
+        .week-chevron { width: 22px; height: 22px; color: var(--text-muted); transition: transform var(--transition-smooth); flex-shrink: 0; }
+        .week-card.expanded .week-chevron { transform: rotate(180deg); }
+        .week-metadata { padding: 0 18px 4px; font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+        .week-body-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--transition-smooth); }
+        .week-card.expanded .week-body-wrapper { grid-template-rows: 1fr; }
+        .week-body-inner { overflow: hidden; }
+        .week-body-content { padding: 0 18px 16px; border-top: 1px solid var(--divider); }
 
-        .sync-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-            flex-shrink: 0;
-            transition: background var(--transition-fast);
-        }
+        .day-section { margin-top: 10px; border: 1px solid #f0ede7; border-radius: var(--radius-md); overflow: hidden; }
+        .day-section:first-child { margin-top: 12px; }
+        .day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: #fafaf8; gap: 8px; transition: background var(--transition-fast); }
+        .day-header:hover { background: #f5f3ef; }
+        .day-title-group { display: flex; align-items: center; gap: 8px; flex: 1; }
+        .day-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); transition: background var(--transition-fast); }
+        .day-dot.complete { background: var(--success); }
+        .day-title { font-size: 0.9rem; font-weight: 600; }
+        .day-progress-mini { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); font-family: var(--font-mono); }
+        .day-progress-mini.complete { color: var(--success); }
+        .day-chevron { width: 18px; height: 18px; color: var(--text-muted); transition: transform var(--transition-smooth); flex-shrink: 0; }
+        .day-section.expanded .day-chevron { transform: rotate(180deg); }
+        .day-body-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--transition-smooth); }
+        .day-section.expanded .day-body-wrapper { grid-template-rows: 1fr; }
+        .day-body-inner { overflow: hidden; }
+        .day-body-content { padding: 6px 14px 12px; }
+        .day-metadata { font-size: 0.75rem; color: var(--text-muted); font-style: italic; padding: 2px 0 6px; margin-top: 4px; border-top: 1px dotted var(--divider); }
 
-        .sync-dot.offline {
-            background: #d4a76a;
-        }
+        .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; transition: opacity var(--transition-smooth); }
+        .task-item.completed { opacity: 0.55; }
+        .task-item.completed .task-text { text-decoration: line-through; text-decoration-color: var(--text-muted); text-decoration-thickness: 1px; }
+        .task-checkbox-wrap { flex-shrink: 0; padding-top: 1px; }
+        .task-checkbox { appearance: none; width: 20px; height: 20px; border: 2px solid #d0ccc4; border-radius: 4px; cursor: pointer; background: #fff; transition: all var(--transition-fast); position: relative; }
+        .task-checkbox:hover { border-color: var(--accent); background: var(--accent-light); }
+        .task-checkbox:checked { background: var(--success); border-color: var(--success); }
+        .task-checkbox:checked::after { content:''; position: absolute; left: 5px; top: 2px; width: 6px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); animation: checkPop 0.25s cubic-bezier(0.18,0.89,0.32,1.28); }
+        @keyframes checkPop { 0%{transform:rotate(45deg)scale(0);}60%{transform:rotate(45deg)scale(1.3);}100%{transform:rotate(45deg)scale(1);} }
+        .task-content { flex: 1; min-width: 0; line-height: 1.5; }
+        .task-text { font-size: 0.88rem; color: var(--text-primary); word-break: break-word; display: inline; }
+        .task-text a { color: var(--link-color); text-decoration: underline; text-underline-offset: 2px; transition: color var(--transition-fast); }
+        .task-text a:hover { color: var(--accent-dark); }
+        .task-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+        .task-duration-badge { font-size: 0.7rem; font-weight: 600; background: var(--duration-bg); color: var(--duration-text); padding: 2px 8px; border-radius: 10px; font-family: var(--font-mono); }
+        .task-link-badge { font-size: 0.7rem; font-weight: 500; background: #eef5f7; color: var(--accent); padding: 2px 8px; border-radius: 10px; text-decoration: none; }
+        .task-link-badge:hover { background: #dde9ed; }
+        .task-quiz-badge { font-size: 0.7rem; font-weight: 500; background: #fdf4e8; color: #b8783b; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
 
-        .sync-dot.syncing {
-            background: #4a7c8c;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.4;
-            }
-        }
-
-        /* ============================
-           TOTAL PROGRESS BAR
-           ============================ */
-        .total-progress-section {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .total-progress-bar-outer {
-            flex: 1;
-            height: 6px;
-            background: var(--card-border);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .total-progress-bar-inner {
-            height: 100%;
-            background: var(--success);
-            border-radius: 3px;
-            transition: width var(--transition-smooth);
-            width: 0%;
-        }
-
-        .total-progress-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            min-width: 44px;
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            font-family: var(--font-mono);
-        }
-
-        /* ============================
-           MAIN CONTENT AREA
-           ============================ */
-        .main-content {
-            margin-top: 12px;
-        }
-
-        /* Loading state */
-        .loading-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .loading-spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid var(--card-border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Error state */
-        .error-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .error-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
-        }
-
-        .retry-btn {
-            margin-top: 16px;
-            padding: 10px 24px;
-            background: var(--accent);
-            color: #fff;
+        /* Fillable blank styling */
+        .fillable-input {
+            display: inline-block;
+            width: auto;
+            min-width: 2.5em;
+            max-width: 4em;
+            padding: 0 2px;
+            font-size: inherit;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: var(--input-bg);
             border: none;
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background var(--transition-fast);
-        }
-
-        .retry-btn:hover {
-            background: var(--accent-dark);
-        }
-
-        /* ============================
-           WEEK CARD
-           ============================ */
-        .week-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--card-shadow);
-            margin-bottom: 16px;
-            overflow: hidden;
-            transition: box-shadow var(--transition-smooth);
-        }
-
-        .week-card:hover {
-            box-shadow: var(--card-shadow-hover);
-        }
-
-        .week-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 18px;
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            gap: 12px;
-            transition: background var(--transition-fast);
-        }
-
-        .week-header:hover {
-            background: #fafaf8;
-        }
-
-        .week-header:active {
-            background: #f5f3ef;
-        }
-
-        .week-title-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .week-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: var(--accent-light);
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-            transition: transform var(--transition-smooth);
-        }
-
-        .week-card.expanded .week-icon {
-            transform: rotate(0deg);
-        }
-
-        .week-title {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: -0.01em;
-        }
-
-        .week-progress-badge {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            background: #f8f7f5;
-            padding: 4px 10px;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
-            font-family: var(--font-mono);
-            transition: all var(--transition-fast);
-        }
-
-        .week-progress-badge.complete {
-            background: var(--success-light);
-            color: var(--success);
-        }
-
-        .week-chevron {
-            width: 22px;
-            height: 22px;
-            color: var(--text-muted);
-            transition: transform var(--transition-smooth);
-            flex-shrink: 0;
-        }
-
-        .week-card.expanded .week-chevron {
-            transform: rotate(180deg);
-        }
-
-        /* Week metadata (e.g., total time) */
-        .week-metadata {
-            padding: 0 18px 4px;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        /* Collapsible week body */
-        .week-body-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows var(--transition-smooth);
-        }
-
-        .week-card.expanded .week-body-wrapper {
-            grid-template-rows: 1fr;
-        }
-
-        .week-body-inner {
-            overflow: hidden;
-        }
-
-        .week-body-content {
-            padding: 0 18px 16px;
-            border-top: 1px solid var(--divider);
-            margin-top: 0;
-        }
-
-        /* ============================
-           DAY SECTION
-           ============================ */
-        .day-section {
-            margin-top: 10px;
-            border: 1px solid #f0ede7;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            transition: border-color var(--transition-fast);
-        }
-
-        .day-section:first-child {
-            margin-top: 12px;
-        }
-
-        .day-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            background: #fafaf8;
-            gap: 8px;
-            transition: background var(--transition-fast);
-        }
-
-        .day-header:hover {
-            background: #f5f3ef;
-        }
-
-        .day-title-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .day-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-            flex-shrink: 0;
-            transition: background var(--transition-fast);
-        }
-
-        .day-dot.complete {
-            background: var(--success);
-        }
-
-        .day-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .day-progress-mini {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            font-variant-numeric: tabular-nums;
-            font-family: var(--font-mono);
-        }
-
-        .day-progress-mini.complete {
-            color: var(--success);
-        }
-
-        .day-chevron {
-            width: 18px;
-            height: 18px;
-            color: var(--text-muted);
-            transition: transform var(--transition-smooth);
-            flex-shrink: 0;
-        }
-
-        .day-section.expanded .day-chevron {
-            transform: rotate(180deg);
-        }
-
-        /* Collapsible day body */
-        .day-body-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows var(--transition-smooth);
-        }
-
-        .day-section.expanded .day-body-wrapper {
-            grid-template-rows: 1fr;
-        }
-
-        .day-body-inner {
-            overflow: hidden;
-        }
-
-        .day-body-content {
-            padding: 6px 14px 12px;
-        }
-
-        /* Day metadata */
-        .day-metadata {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-style: italic;
-            padding: 2px 0 6px;
-            margin-top: 4px;
-            border-top: 1px dotted var(--divider);
-        }
-
-        /* ============================
-           TASK ITEM
-           ============================ */
-        .task-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 7px 0;
-            transition: opacity var(--transition-smooth);
-        }
-
-        .task-item.completed {
-            opacity: 0.55;
-        }
-
-        .task-item.completed .task-text {
-            text-decoration: line-through;
-            text-decoration-color: var(--text-muted);
-            text-decoration-thickness: 1px;
-        }
-
-        /* Custom checkbox */
-        .task-checkbox-wrap {
-            flex-shrink: 0;
-            padding-top: 1px;
-            position: relative;
-        }
-
-        .task-checkbox {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #d0ccc4;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-            background: #fff;
-            transition: all var(--transition-fast);
-            flex-shrink: 0;
+            border-bottom: 2px dashed var(--input-border);
+            border-radius: 2px;
+            text-align: center;
+            transition: border-color var(--transition-fast), background var(--transition-fast);
             outline: none;
+            margin: 0 2px;
+            vertical-align: baseline;
+        }
+        .fillable-input:focus {
+            background: #ffffff;
+            border-bottom-color: var(--input-focus);
+            box-shadow: 0 1px 0 0 rgba(74,124,140,0.3);
+        }
+        .fillable-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+            font-style: italic;
         }
 
-        .task-checkbox:hover {
-            border-color: var(--accent);
-            background: var(--accent-light);
+        @media (max-width:480px) {
+            .app-container { padding: 10px 10px 32px; }
+            .app-title { font-size: 1.25rem; }
+            .week-header { padding: 12px 14px; }
+            .week-body-content { padding: 0 14px 12px; }
+            .day-header { padding: 8px 10px; }
+            .day-body-content { padding: 4px 10px 8px; }
+            .task-text { font-size: 0.82rem; }
+            .task-checkbox { width: 18px; height: 18px; }
+            .task-checkbox:checked::after { left: 4px; top: 1px; width: 5px; height: 9px; }
         }
-
-        .task-checkbox:checked {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
-        .task-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            left: 5px;
-            top: 2px;
-            width: 6px;
-            height: 10px;
-            border: solid #fff;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-            animation: checkPop 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-        }
-
-        @keyframes checkPop {
-            0% {
-                transform: rotate(45deg) scale(0);
-            }
-            60% {
-                transform: rotate(45deg) scale(1.3);
-            }
-            100% {
-                transform: rotate(45deg) scale(1);
-            }
-        }
-
-        .task-content {
-            flex: 1;
-            min-width: 0;
-            line-height: 1.5;
-        }
-
-        .task-text {
-            font-size: 0.88rem;
-            color: var(--text-primary);
-            word-break: break-word;
-        }
-
-        .task-text a {
-            color: var(--link-color);
-            text-decoration: underline;
-            text-underline-offset: 2px;
-            text-decoration-thickness: 1px;
-            transition: color var(--transition-fast);
-        }
-
-        .task-text a:hover {
-            color: var(--accent-dark);
-        }
-
-        .task-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .task-duration-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            background: var(--duration-bg);
-            color: var(--duration-text);
-            padding: 2px 8px;
-            border-radius: 10px;
-            white-space: nowrap;
-            font-family: var(--font-mono);
-        }
-
-        .task-link-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            background: #eef5f7;
-            color: var(--accent);
-            padding: 2px 8px;
-            border-radius: 10px;
-            white-space: nowrap;
-            text-decoration: none;
-            transition: background var(--transition-fast);
-        }
-
-        .task-link-badge:hover {
-            background: #dde9ed;
-        }
-
-        .task-quiz-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            background: #fdf4e8;
-            color: #b8783b;
-            padding: 2px 8px;
-            border-radius: 10px;
-            white-space: nowrap;
-        }
-
-        /* ============================
-           RESPONSIVE ADJUSTMENTS
-           ============================ */
-        @media (max-width: 480px) {
-            .app-container {
-                padding: 10px 10px 32px;
-            }
-            .app-title {
-                font-size: 1.25rem;
-            }
-            .app-title .hebrew-char {
-                width: 34px;
-                height: 34px;
-                font-size: 1.2rem;
-            }
-            .week-header {
-                padding: 12px 14px;
-            }
-            .week-body-content {
-                padding: 0 14px 12px;
-            }
-            .day-header {
-                padding: 8px 10px;
-            }
-            .day-body-content {
-                padding: 4px 10px 8px;
-            }
-            .task-text {
-                font-size: 0.82rem;
-            }
-            .task-checkbox {
-                width: 18px;
-                height: 18px;
-            }
-            .task-checkbox:checked::after {
-                left: 4px;
-                top: 1px;
-                width: 5px;
-                height: 9px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .app-container {
-                padding: 24px 24px 48px;
-            }
-            .app-title {
-                font-size: 1.7rem;
-            }
-            .app-title .hebrew-char {
-                width: 44px;
-                height: 44px;
-                font-size: 1.5rem;
-            }
-            .week-header {
-                padding: 18px 22px;
-            }
-            .week-body-content {
-                padding: 0 22px 18px;
-            }
-            .day-header {
-                padding: 11px 16px;
-            }
-            .day-body-content {
-                padding: 6px 16px 14px;
-            }
-            .task-text {
-                font-size: 0.9rem;
-            }
-        }
-
-        /* ============================
-           REDUCED MOTION
-           ============================ */
-        @media (prefers-reduced-motion: reduce) {
-            .week-body-wrapper,
-            .day-body-wrapper,
-            .total-progress-bar-inner,
-            .task-item,
-            .week-chevron,
-            .day-chevron {
-                transition: none;
-            }
-            .task-checkbox:checked::after {
-                animation: none;
-            }
-        }
-
-        /* ============================
-           PRINT STYLES
-           ============================ */
         @media print {
-            body {
-                background: #fff;
-            }
-            .app-header {
-                position: static;
-                border-bottom: 1px solid #ccc;
-            }
-            .week-card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                break-inside: avoid;
-            }
-            .week-body-wrapper {
-                grid-template-rows: 1fr !important;
-            }
-            .day-body-wrapper {
-                grid-template-rows: 1fr !important;
-            }
+            body { background:#fff; }
+            .app-header { position:static; border-bottom:1px solid #ccc; }
+            .week-card { box-shadow:none; border:1px solid #ddd; break-inside:avoid; }
+            .week-body-wrapper { grid-template-rows:1fr!important; }
+            .day-body-wrapper { grid-template-rows:1fr!important; }
         }
     </style>
 </head>
 <body>
-    <!-- ============================
-    APP SHELL
-    Minimal HTML - content rendered
-    dynamically from lessons.md
-    ============================ -->
-    <div class="app-container" id="appContainer">
-        <!-- Header with title + total progress -->
-        <header class="app-header" id="appHeader">
-            <div class="header-top">
-                <h1 class="app-title">
-                    <span class="hebrew-char">א</span>
-                    Aleph with Beth Tracker
-                </h1>
-                <span class="sync-status" id="syncStatus" title="Sync status">
-                    <span class="sync-dot" id="syncDot"></span>
-                    <span id="syncLabel">Ready</span>
-                </span>
-            </div>
-            <div class="total-progress-section" id="totalProgressSection">
-                <div class="total-progress-bar-outer">
-                    <div class="total-progress-bar-inner" id="totalProgressBar" style="width: 0%;"></div>
-                </div>
-                <span class="total-progress-label" id="totalProgressLabel">0%</span>
-            </div>
-        </header>
+<div class="app-container" id="appContainer">
+    <header class="app-header" id="appHeader">
+        <div class="header-top">
+            <h1 class="app-title"><span class="hebrew-char">א</span> Aleph with Beth Tracker</h1>
+            <span class="sync-status" id="syncStatus"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Ready</span></span>
+        </div>
+        <div class="total-progress-section" id="totalProgressSection">
+            <div class="total-progress-bar-outer"><div class="total-progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
+            <span class="total-progress-label" id="totalProgressLabel">0%</span>
+        </div>
+    </header>
+    <main class="main-content" id="mainContent">
+        <div class="loading-state" id="loadingState"><div class="loading-spinner"></div><p>Loading your learning schedule&hellip;</p></div>
+    </main>
+</div>
+<script>
+(function() {
+    const CONFIG = {
+        lessonsFile: './lessons.md',
+        storageKey: 'aleph-beth-task-states',  // now stores objects { checked, values }
+        cacheName: 'aleph-beth-v1',
+        debounceMs: 300,
+    };
 
-        <!-- Main content rendered here -->
-        <main class="main-content" id="mainContent">
-            <div class="loading-state" id="loadingState">
-                <div class="loading-spinner"></div>
-                <p>Loading your learning schedule&hellip;</p>
-            </div>
-        </main>
-    </div>
+    let dom = {};
+    function cacheDomReferences() {
+        dom.appContainer = document.getElementById('appContainer');
+        dom.appHeader = document.getElementById('appHeader');
+        dom.mainContent = document.getElementById('mainContent');
+        dom.loadingState = document.getElementById('loadingState');
+        dom.totalProgressBar = document.getElementById('totalProgressBar');
+        dom.totalProgressLabel = document.getElementById('totalProgressLabel');
+        dom.syncDot = document.getElementById('syncDot');
+        dom.syncLabel = document.getElementById('syncLabel');
+        dom.syncStatus = document.getElementById('syncStatus');
+        dom.totalProgressSection = document.getElementById('totalProgressSection');
+    }
 
-    <script>
-        (function() {
-            // ================================================================
-            // ALEPH WITH BETH TRACKER — OFFLINE-FIRST PWA
-            // ================================================================
-            // All logic is wrapped in an IIFE to avoid global scope pollution.
-            // The app is organized into clear, commented sections:
-            //
-            //   1. CONFIGURATION
-            //   2. DOM REFERENCES
-            //   3. UTILITY FUNCTIONS (hashing, markdown link parsing)
-            //   4. STORAGE (localStorage for checkbox state)
-            //   5. PARSER (lessons.md → structured data)
-            //   6. RENDERER (structured data → DOM)
-            //   7. PROGRESS CALCULATION
-            //   8. EVENT HANDLERS (checkboxes, collapse toggles)
-            //   9. DATA FETCHING & SYNC
-            //  10. SERVICE WORKER REGISTRATION
-            //  11. INITIALIZATION
-            // ================================================================
+    function generateTaskId(weekTitle, dayTitle, taskText) {
+        const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
+        let hash = 0;
+        for (let i = 0; i < composite.length; i++) {
+            const char = composite.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0;
+        }
+        return 'task-' + Math.abs(hash).toString(36);
+    }
 
-            // ----------------------------------------------------------------
-            // 1. CONFIGURATION
-            // ----------------------------------------------------------------
-            const CONFIG = {
-                lessonsFile: './lessons.md', // Path to the markdown data file
-                storageKey: 'aleph-beth-checkbox-states', // localStorage key
-                cacheName: 'aleph-beth-v1', // Service worker cache version
-                debounceMs: 300, // Debounce delay for saving to localStorage
-            };
+    function convertMarkdownLinksToHtml(text) {
+        return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+            '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
 
-            // ----------------------------------------------------------------
-            // 2. DOM REFERENCES
-            // Cached on init for performance
-            // ----------------------------------------------------------------
-            let dom = {};
+    function extractDuration(text) {
+        const match = text.match(/\((\d{1,3}:\d{2})\)/);
+        return match ? match[1] : null;
+    }
 
-            function cacheDomReferences() {
-                dom.appContainer = document.getElementById('appContainer');
-                dom.appHeader = document.getElementById('appHeader');
-                dom.mainContent = document.getElementById('mainContent');
-                dom.loadingState = document.getElementById('loadingState');
-                dom.totalProgressBar = document.getElementById('totalProgressBar');
-                dom.totalProgressLabel = document.getElementById('totalProgressLabel');
-                dom.syncDot = document.getElementById('syncDot');
-                dom.syncLabel = document.getElementById('syncLabel');
-                dom.syncStatus = document.getElementById('syncStatus');
-                dom.totalProgressSection = document.getElementById('totalProgressSection');
-            }
+    function extractLinks(text) {
+        const links = [];
+        const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+            links.push({ text: match[1], url: match[2] });
+        }
+        return links;
+    }
 
-            // ----------------------------------------------------------------
-            // 3. UTILITY FUNCTIONS
-            // ----------------------------------------------------------------
+    function isQuizTask(text) {
+        return /quiz|i got\s*_+%/i.test(text);
+    }
 
-            /**
-             * Generates a deterministic, stable unique ID for a task.
-             * Uses a simple DJB2-inspired hash of the composite key
-             * (week title + day title + task text). This ensures IDs
-             * remain consistent across page reloads and content updates,
-             * which is critical for persisting checkbox state.
-             *
-             * @param {string} weekTitle - e.g. "Week 1"
-             * @param {string} dayTitle  - e.g. "Day 1"
-             * @param {string} taskText  - The raw task text
-             * @returns {string} A stable ID like "task-2g9x7k"
-             */
-            function generateTaskId(weekTitle, dayTitle, taskText) {
-                const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
-                let hash = 0;
-                for (let i = 0; i < composite.length; i++) {
-                    const char = composite.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash |= 0; // Convert to 32-bit integer
-                }
-                return 'task-' + Math.abs(hash).toString(36);
-            }
+    // Count blanks (_____) in a task text to create fillable fields
+    function countBlanks(text) {
+        const matches = text.match(/_{2,}/g);
+        return matches ? matches.length : 0;
+    }
 
-            /**
-             * Converts markdown-style links in text to HTML anchor tags.
-             * Handles multiple links in a single string.
-             * Example: "[First Words](https://...)" becomes
-             *          '<a href="https://..." target="_blank" rel="noopener">First Words</a>'
-             *
-             * @param {string} text - Raw text potentially containing markdown links
-             * @returns {string} HTML with anchor tags
-             */
-            function convertMarkdownLinksToHtml(text) {
-                // Match [link text](url) — handles URLs with query params and fragments
-                return text.replace(
-                    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-                    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-                );
-            }
+    function debounce(fn, delay) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
 
-            /**
-             * Extracts duration patterns like (15:09) or (58:02) from text.
-             * Returns the first match or null.
-             *
-             * @param {string} text
-             * @returns {string|null} e.g. "15:09" or null
-             */
-            function extractDuration(text) {
-                const match = text.match(/\((\d{1,3}:\d{2})\)/);
-                return match ? match[1] : null;
-            }
-
-            /**
-             * Extracts all markdown links from text.
-             * Returns an array of {text, url} objects.
-             *
-             * @param {string} text
-             * @returns {Array<{text: string, url: string}>}
-             */
-            function extractLinks(text) {
-                const links = [];
-                const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-                let match;
-                while ((match = regex.exec(text)) !== null) {
-                    links.push({ text: match[1], url: match[2] });
-                }
-                return links;
-            }
-
-            /**
-             * Checks if a task text appears to reference a quiz
-             * (contains patterns like "I got ___%" or "quiz").
-             *
-             * @param {string} text
-             * @returns {boolean}
-             */
-            function isQuizTask(text) {
-                return /quiz|i got\s*_+%/i.test(text);
-            }
-
-            /**
-             * Debounce utility to limit how often a function runs.
-             *
-             * @param {Function} fn
-             * @param {number} delay - milliseconds
-             * @returns {Function} debounced version
-             */
-            function debounce(fn, delay) {
-                let timer;
-                return function(...args) {
-                    clearTimeout(timer);
-                    timer = setTimeout(() => fn.apply(this, args), delay);
-                };
-            }
-
-            // ----------------------------------------------------------------
-            // 4. STORAGE (localStorage)
-            // Manages persisting checkbox states so progress survives
-            // page reloads and works fully offline.
-            // ----------------------------------------------------------------
-
-            /**
-             * Loads all saved checkbox states from localStorage.
-             * @returns {Object} Map of taskId → boolean (true = checked)
-             */
-            function loadCheckboxStates() {
-                try {
-                    const raw = localStorage.getItem(CONFIG.storageKey);
-                    return raw ? JSON.parse(raw) : {};
-                } catch (e) {
-                    console.warn('Failed to load checkbox states from localStorage:', e);
-                    return {};
+    // Storage: now saves objects { checked: boolean, values: string[] } per task
+    function loadTaskStates() {
+        try {
+            const raw = localStorage.getItem(CONFIG.storageKey);
+            if (!raw) return {};
+            const data = JSON.parse(raw);
+            // Migrate old format (just boolean) to new format
+            const migrated = {};
+            for (const [id, val] of Object.entries(data)) {
+                if (typeof val === 'boolean') {
+                    migrated[id] = { checked: val, values: [] };
+                } else if (val && typeof val.checked === 'boolean') {
+                    // ensure values is an array
+                    migrated[id] = { checked: val.checked, values: Array.isArray(val.values) ? val.values : [] };
+                } else {
+                    // fallback
+                    migrated[id] = { checked: false, values: [] };
                 }
             }
+            return migrated;
+        } catch (e) {
+            console.warn('Failed to load task states:', e);
+            return {};
+        }
+    }
 
-            /**
-             * Saves all checkbox states to localStorage.
-             * Debounced to avoid excessive writes during rapid toggling.
-             * @param {Object} states - Map of taskId → boolean
-             */
-            const saveCheckboxStates = debounce(function(states) {
-                try {
-                    localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
-                } catch (e) {
-                    console.warn('Failed to save checkbox states to localStorage:', e);
-                }
-            }, CONFIG.debounceMs);
+    const saveTaskStates = debounce(function(states) {
+        try {
+            localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
+        } catch (e) {
+            console.warn('Failed to save task states:', e);
+        }
+    }, CONFIG.debounceMs);
 
-            /**
-             * Saves a single task's checkbox state immediately
-             * (for responsive UX) and triggers the debounced full save.
-             * @param {string} taskId
-             * @param {boolean} checked
-             */
-            function setCheckboxState(taskId, checked) {
-                const states = loadCheckboxStates();
-                states[taskId] = checked;
-                // Save immediately for responsiveness
-                try {
-                    localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
-                } catch (e) {
-                    console.warn('Failed to save checkbox state:', e);
-                }
-            }
+    function setCheckboxState(taskId, checked) {
+        const states = loadTaskStates();
+        if (!states[taskId]) states[taskId] = { checked: false, values: [] };
+        states[taskId].checked = checked;
+        try {
+            localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
+        } catch (e) {}
+    }
 
-            // ----------------------------------------------------------------
-            // 5. MARKDOWN PARSER
-            // Parses lessons.md into a structured array of Week objects.
-            // Each Week contains Day objects, each Day contains Task objects.
-            //
-            // Expected markdown structure:
-            //   # Week 1        or ## Week 1       → week header
-            //   ### Day 1                          → day header
-            //   - [ ] Task text (duration) [link]  → task
-            //   - [x] Completed task               → completed task
-            //   > Metadata text                    → day/week metadata
-            // ----------------------------------------------------------------
+    function setBlankValue(taskId, blankIndex, value) {
+        const states = loadTaskStates();
+        if (!states[taskId]) states[taskId] = { checked: false, values: [] };
+        if (!Array.isArray(states[taskId].values)) states[taskId].values = [];
+        states[taskId].values[blankIndex] = value;
+        try {
+            localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
+        } catch (e) {}
+    }
 
-            /**
-             * Main parser: converts raw markdown string into structured data.
-             *
-             * @param {string} markdown - Raw content of lessons.md
-             * @returns {Array} Array of week objects:
-             *   [{ id, title, weekNumber, metadata, days: [
-             *     { id, title, dayNumber, metadata, tasks: [
-             *       { id, rawText, displayText, checked, duration, links, isQuiz }
-             *     ]}
-             *   ]}]
-             */
-            function parseLessons(markdown) {
-                const lines = markdown.split('\n');
-                const weeks = [];
-                let currentWeek = null;
-                let currentDay = null;
-                let pendingMetadata = null; // Metadata line waiting to be assigned
+    // Parser
+    function parseLessons(markdown) {
+        const lines = markdown.split('\n');
+        const weeks = [];
+        let currentWeek = null;
+        let currentDay = null;
+        let pendingMetadata = null;
 
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    const trimmed = line.trim();
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const trimmed = line.trim();
 
-                    // Skip empty lines
-                    if (trimmed === '') {
-                        // Flush pending metadata to current context
-                        if (pendingMetadata && currentDay) {
-                            currentDay.metadata = (currentDay.metadata ?
-                                currentDay.metadata + ' ' : '') + pendingMetadata;
-                            pendingMetadata = null;
-                        } else if (pendingMetadata && currentWeek && !currentDay) {
-                            currentWeek.metadata = (currentWeek.metadata ?
-                                currentWeek.metadata + ' ' : '') + pendingMetadata;
-                            pendingMetadata = null;
-                        }
-                        continue;
-                    }
-
-                    // --- Week header: # Week N or ## Week N ---
-                    const weekMatch = trimmed.match(/^#{1,2}\s+Week\s+(\d+)\s*$/i);
-                    if (weekMatch) {
-                        // Flush any pending metadata to previous week
-                        if (pendingMetadata && currentWeek) {
-                            currentWeek.metadata = (currentWeek.metadata ?
-                                currentWeek.metadata + ' ' : '') + pendingMetadata;
-                            pendingMetadata = null;
-                        }
-                        const weekNum = parseInt(weekMatch[1], 10);
-                        currentWeek = {
-                            id: 'week-' + weekNum,
-                            title: 'Week ' + weekNum,
-                            weekNumber: weekNum,
-                            metadata: null,
-                            days: [],
-                        };
-                        currentDay = null;
-                        weeks.push(currentWeek);
-                        continue;
-                    }
-
-                    // --- Day header: ### Day N ---
-                    const dayMatch = trimmed.match(/^###\s+Day\s+(\d+)\s*$/i);
-                    if (dayMatch && currentWeek) {
-                        // Flush pending metadata to previous day or week
-                        if (pendingMetadata && currentDay) {
-                            currentDay.metadata = (currentDay.metadata ?
-                                currentDay.metadata + ' ' : '') + pendingMetadata;
-                            pendingMetadata = null;
-                        } else if (pendingMetadata && currentWeek && !currentDay) {
-                            currentWeek.metadata = (currentWeek.metadata ?
-                                currentWeek.metadata + ' ' : '') + pendingMetadata;
-                            pendingMetadata = null;
-                        }
-                        const dayNum = parseInt(dayMatch[1], 10);
-                        currentDay = {
-                            id: currentWeek.id + '-day-' + dayNum,
-                            title: 'Day ' + dayNum,
-                            dayNumber: dayNum,
-                            metadata: null,
-                            tasks: [],
-                        };
-                        currentWeek.days.push(currentDay);
-                        continue;
-                    }
-
-                    // --- Metadata line: > ... ---
-                    if (trimmed.startsWith('>')) {
-                        const metaText = trimmed.replace(/^>\s*/, '').trim();
-                        if (metaText) {
-                            pendingMetadata = metaText;
-                        }
-                        continue;
-                    }
-
-                    // --- Task line: - [ ] ... or - [x] ... ---
-                    const taskMatch = trimmed.match(/^-\s+\[(\s|x)\]\s+(.+)$/);
-                    if (taskMatch && currentDay) {
-                        // Flush pending metadata into the day before adding tasks
-                        if (pendingMetadata) {
-                            currentDay.metadata = (currentDay.metadata ?
-                                currentDay.metadata + ' ' : '') + pendingMetadata;
-                            pendingMetadata = null;
-                        }
-                        const isChecked = taskMatch[1] === 'x';
-                        const rawText = taskMatch[2].trim();
-                        const duration = extractDuration(rawText);
-                        const links = extractLinks(rawText);
-                        const quizFlag = isQuizTask(rawText);
-
-                        // Create a clean display version (keep links for rendering)
-                        const displayText = rawText;
-
-                        const taskId = generateTaskId(
-                            currentWeek.title,
-                            currentDay.title,
-                            rawText
-                        );
-
-                        currentDay.tasks.push({
-                            id: taskId,
-                            rawText: rawText,
-                            displayText: displayText,
-                            checked: isChecked, // Default from markdown; overridden by localStorage
-                            duration: duration,
-                            links: links,
-                            isQuiz: quizFlag,
-                        });
-                        continue;
-                    }
-
-                    // --- Fallback: if we have pending metadata and hit unrecognized content ---
-                    if (pendingMetadata && currentDay) {
-                        currentDay.metadata = (currentDay.metadata ?
-                            currentDay.metadata + ' ' : '') + pendingMetadata;
-                        pendingMetadata = null;
-                    } else if (pendingMetadata && currentWeek && !currentDay) {
-                        currentWeek.metadata = (currentWeek.metadata ?
-                            currentWeek.metadata + ' ' : '') + pendingMetadata;
-                        pendingMetadata = null;
-                    }
-                }
-
-                // Flush any remaining pending metadata
+            if (trimmed === '') {
                 if (pendingMetadata && currentDay) {
-                    currentDay.metadata = (currentDay.metadata ?
-                        currentDay.metadata + ' ' : '') + pendingMetadata;
+                    currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
+                    pendingMetadata = null;
                 } else if (pendingMetadata && currentWeek && !currentDay) {
-                    currentWeek.metadata = (currentWeek.metadata ?
-                        currentWeek.metadata + ' ' : '') + pendingMetadata;
+                    currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
+                    pendingMetadata = null;
                 }
-
-                return weeks;
+                continue;
             }
 
-            // ----------------------------------------------------------------
-            // 6. RENDERER
-            // Converts the parsed data structure into DOM elements.
-            // Uses event delegation where practical and builds HTML
-            // via template literals for clarity.
-            // ----------------------------------------------------------------
-
-            /** @type {Object} Tracks collapse state for weeks and days during session */
-            let collapseState = {
-                weeks: {}, // weekId → boolean (true = expanded)
-                days: {}, // dayId → boolean (true = expanded)
-            };
-
-            /**
-             * Main render function. Clears the main content area and
-             * renders all weeks, days, and tasks.
-             *
-             * @param {Array} weeksData - Parsed week objects from parseLessons()
-             * @param {Object} savedStates - Checkbox states from localStorage
-             */
-            function renderApp(weeksData, savedStates) {
-                // Clear main content (remove loading state)
-                dom.mainContent.innerHTML = '';
-
-                if (!weeksData || weeksData.length === 0) {
-                    dom.mainContent.innerHTML = `
-                        <div class="error-state">
-                            <div class="error-icon">📭</div>
-                            <p>No learning schedule data found.</p>
-                            <p style="font-size:0.85rem;color:var(--text-muted);">
-                                Please ensure <code>lessons.md</code> exists and contains valid data.
-                            </p>
-                            <button class="retry-btn" onclick="location.reload()">Retry</button>
-                        </div>`;
-                    updateTotalProgress(weeksData, savedStates);
-                    return;
+            const weekMatch = trimmed.match(/^#{1,2}\s+Week\s+(\d+)\s*$/i);
+            if (weekMatch) {
+                if (pendingMetadata && currentWeek) {
+                    currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
+                    pendingMetadata = null;
                 }
+                const weekNum = parseInt(weekMatch[1], 10);
+                currentWeek = { id: 'week-'+weekNum, title: 'Week '+weekNum, weekNumber: weekNum, metadata: null, days: [] };
+                currentDay = null;
+                weeks.push(currentWeek);
+                continue;
+            }
 
-                // Initialize collapse state: all expanded by default
-                weeksData.forEach(week => {
-                    if (!(week.id in collapseState.weeks)) {
-                        collapseState.weeks[week.id] = true;
-                    }
-                    week.days.forEach(day => {
-                        if (!(day.id in collapseState.days)) {
-                            collapseState.days[day.id] = true;
-                        }
-                    });
+            const dayMatch = trimmed.match(/^###\s+Day\s+(\d+)\s*$/i);
+            if (dayMatch && currentWeek) {
+                if (pendingMetadata && currentDay) {
+                    currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
+                    pendingMetadata = null;
+                }
+                const dayNum = parseInt(dayMatch[1], 10);
+                currentDay = { id: currentWeek.id+'-day-'+dayNum, title: 'Day '+dayNum, dayNumber: dayNum, metadata: null, tasks: [] };
+                currentWeek.days.push(currentDay);
+                continue;
+            }
+
+            if (trimmed.startsWith('>')) {
+                const metaText = trimmed.replace(/^>\s*/, '').trim();
+                if (metaText) pendingMetadata = metaText;
+                continue;
+            }
+
+            const taskMatch = trimmed.match(/^-\s+\[(\s|x)\]\s+(.+)$/);
+            if (taskMatch && currentDay) {
+                if (pendingMetadata) {
+                    currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
+                    pendingMetadata = null;
+                }
+                const isChecked = taskMatch[1] === 'x';
+                const rawText = taskMatch[2].trim();
+                const duration = extractDuration(rawText);
+                const links = extractLinks(rawText);
+                const quizFlag = isQuizTask(rawText);
+                const blankCount = countBlanks(rawText);
+                const taskId = generateTaskId(currentWeek.title, currentDay.title, rawText);
+                currentDay.tasks.push({
+                    id: taskId,
+                    rawText, displayText: rawText,
+                    checked: isChecked,
+                    duration, links, isQuiz: quizFlag,
+                    blankCount
                 });
-
-                // Build and append each week card
-                weeksData.forEach(week => {
-                    const weekEl = buildWeekElement(week, savedStates);
-                    dom.mainContent.appendChild(weekEl);
-                });
-
-                // Update overall progress
-                updateTotalProgress(weeksData, savedStates);
-
-                // Attach scroll listener for sticky header effect
-                attachScrollListener();
+                continue;
             }
 
-            /**
-             * Builds a single week card element.
-             *
-             * @param {Object} week
-             * @param {Object} savedStates
-             * @returns {HTMLElement}
-             */
-            function buildWeekElement(week, savedStates) {
-                const isExpanded = collapseState.weeks[week.id] !== false;
-
-                // Calculate week progress
-                const weekProgress = calculateProgress(week, savedStates);
-
-                const card = document.createElement('div');
-                card.className = 'week-card' + (isExpanded ? ' expanded' : '');
-                card.setAttribute('data-week-id', week.id);
-
-                // Build HTML for the card
-                let html = '';
-                // Week header
-                html += '<div class="week-header" data-action="toggle-week" data-week-id="' + week.id + '">';
-                html += '<div class="week-title-group">';
-                html += '<span class="week-icon">' + week.weekNumber + '</span>';
-                html += '<span class="week-title">' + escapeHtml(week.title) + '</span>';
-                html += '</div>';
-                html += '<span class="week-progress-badge' + (weekProgress.percent >= 100 ? ' complete' : '') +
-                    '">' +
-                    weekProgress.completed + '/' + weekProgress.total + ' done</span>';
-                html +=
-                    '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-                html += '</div>';
-
-                // Week metadata (if any)
-                if (week.metadata) {
-                    html += '<div class="week-metadata">' + escapeHtml(week.metadata) + '</div>';
-                }
-
-                // Week body wrapper (collapsible)
-                html += '<div class="week-body-wrapper">';
-                html += '<div class="week-body-inner">';
-                html += '<div class="week-body-content">';
-
-                // Days
-                week.days.forEach(day => {
-                    html += buildDayHtml(day, savedStates);
-                });
-
-                html += '</div></div></div>';
-
-                card.innerHTML = html;
-
-                // Attach event listeners
-                attachWeekEventListeners(card, week);
-
-                return card;
+            if (pendingMetadata && currentDay) {
+                currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
+                pendingMetadata = null;
             }
+        }
+        if (pendingMetadata && currentDay) {
+            currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
+        } else if (pendingMetadata && currentWeek && !currentDay) {
+            currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
+        }
+        return weeks;
+    }
 
-            /**
-             * Builds HTML string for a day section within a week.
-             *
-             * @param {Object} day
-             * @param {Object} savedStates
-             * @returns {string} HTML string
-             */
-            function buildDayHtml(day, savedStates) {
-                const isExpanded = collapseState.days[day.id] !== false;
-                const dayProgress = calculateDayProgress(day, savedStates);
+    // Rendering
+    let collapseState = { weeks: {}, days: {} };
 
-                let html = '';
-                html += '<div class="day-section' + (isExpanded ? ' expanded' : '') + '" data-day-id="' + day.id +
-                    '">';
-                // Day header
-                html += '<div class="day-header" data-action="toggle-day" data-day-id="' + day.id + '">';
-                html += '<div class="day-title-group">';
-                html += '<span class="day-dot' + (dayProgress.percent >= 100 ? ' complete' : '') + '"></span>';
-                html += '<span class="day-title">' + escapeHtml(day.title) + '</span>';
-                html += '</div>';
-                html += '<span class="day-progress-mini' + (dayProgress.percent >= 100 ? ' complete' : '') + '">' +
-                    dayProgress.completed + '/' + dayProgress.total + '</span>';
-                html +=
-                    '<svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-                html += '</div>';
-
-                // Day body wrapper (collapsible)
-                html += '<div class="day-body-wrapper">';
-                html += '<div class="day-body-inner">';
-                html += '<div class="day-body-content">';
-
-                // Tasks
-                day.tasks.forEach(task => {
-                    html += buildTaskHtml(task, savedStates);
-                });
-
-                // Day metadata
-                if (day.metadata) {
-                    html += '<div class="day-metadata">' + escapeHtml(day.metadata) + '</div>';
-                }
-
-                html += '</div></div></div>';
-                html += '</div>'; // .day-section
-
-                return html;
-            }
-
-            /**
-             * Builds HTML string for a single task item.
-             *
-             * @param {Object} task
-             * @param {Object} savedStates
-             * @returns {string} HTML string
-             */
-            function buildTaskHtml(task, savedStates) {
-                // Determine checked state: localStorage overrides markdown default
-                const isChecked = (task.id in savedStates) ? savedStates[task.id] : task.checked;
-
-                let html = '';
-                html += '<div class="task-item' + (isChecked ? ' completed' : '') + '" data-task-id="' + task.id +
-                    '">';
-                // Checkbox
-                html += '<span class="task-checkbox-wrap">';
-                html += '<input type="checkbox" class="task-checkbox" ' +
-                    'data-task-id="' + task.id + '" ' +
-                    (isChecked ? 'checked' : '') + '>';
-                html += '</span>';
-                // Task content
-                html += '<div class="task-content">';
-                // Display text with markdown links converted to HTML
-                html += '<span class="task-text">' + convertMarkdownLinksToHtml(escapeHtml(task.displayText)) +
-                    '</span>';
-                // Badges
-                html += '<div class="task-badges">';
-                if (task.duration) {
-                    html += '<span class="task-duration-badge">⏱ ' + escapeHtml(task.duration) + '</span>';
-                }
-                if (task.isQuiz) {
-                    html += '<span class="task-quiz-badge">📝 Quiz</span>';
-                }
-                // Render extracted links as clickable badges
-                task.links.forEach(link => {
-                    html += '<a href="' + escapeHtml(link.url) +
-                        '" target="_blank" rel="noopener noreferrer" class="task-link-badge">🔗 ' +
-                        escapeHtml(link.text) + '</a>';
-                });
-                html += '</div>';
-                html += '</div>';
-                html += '</div>'; // .task-item
-
-                return html;
-            }
-
-            /**
-             * HTML-escapes user-generated content to prevent XSS.
-             *
-             * @param {string} str
-             * @returns {string}
-             */
-            function escapeHtml(str) {
-                if (!str) return '';
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
-
-            /**
-             * Attaches event listeners to a week card for collapse toggling.
-             *
-             * @param {HTMLElement} card
-             * @param {Object} week
-             */
-            function attachWeekEventListeners(card, week) {
-                // Week header click → toggle week collapse
-                const header = card.querySelector('.week-header');
-                if (header) {
-                    header.addEventListener('click', function(e) {
-                        // Don't toggle if clicking a link inside
-                        if (e.target.closest('a')) return;
-                        toggleWeekCollapse(week.id, card);
-                    });
-                }
-
-                // Day header clicks → toggle day collapse
-                const dayHeaders = card.querySelectorAll('.day-header');
-                dayHeaders.forEach(dayHeader => {
-                    dayHeader.addEventListener('click', function(e) {
-                        if (e.target.closest('a')) return;
-                        const dayId = dayHeader.getAttribute('data-day-id');
-                        const daySection = dayHeader.closest('.day-section');
-                        if (dayId && daySection) {
-                            toggleDayCollapse(dayId, daySection);
-                        }
-                    });
-                });
-
-                // Task checkbox changes
-                const checkboxes = card.querySelectorAll('.task-checkbox');
-                checkboxes.forEach(cb => {
-                    cb.addEventListener('change', function() {
-                        handleCheckboxChange(cb);
-                    });
-                });
-            }
-
-            /**
-             * Toggles the collapsed/expanded state of a week.
-             *
-             * @param {string} weekId
-             * @param {HTMLElement} cardElement
-             */
-            function toggleWeekCollapse(weekId, cardElement) {
-                const isCurrentlyExpanded = cardElement.classList.contains('expanded');
-                if (isCurrentlyExpanded) {
-                    cardElement.classList.remove('expanded');
-                    collapseState.weeks[weekId] = false;
-                } else {
-                    cardElement.classList.add('expanded');
-                    collapseState.weeks[weekId] = true;
-                }
-            }
-
-            /**
-             * Toggles the collapsed/expanded state of a day.
-             *
-             * @param {string} dayId
-             * @param {HTMLElement} daySection
-             */
-            function toggleDayCollapse(dayId, daySection) {
-                const isCurrentlyExpanded = daySection.classList.contains('expanded');
-                if (isCurrentlyExpanded) {
-                    daySection.classList.remove('expanded');
-                    collapseState.days[dayId] = false;
-                } else {
-                    daySection.classList.add('expanded');
-                    collapseState.days[dayId] = true;
-                }
-            }
-
-            /**
-             * Handles a task checkbox being toggled by the user.
-             * Updates localStorage, the visual state, and all progress indicators.
-             *
-             * @param {HTMLInputElement} checkboxElement
-             */
-            function handleCheckboxChange(checkboxElement) {
-                const taskId = checkboxElement.getAttribute('data-task-id');
-                const isChecked = checkboxElement.checked;
-                const taskItem = checkboxElement.closest('.task-item');
-
-                // Update visual state
-                if (taskItem) {
-                    if (isChecked) {
-                        taskItem.classList.add('completed');
-                    } else {
-                        taskItem.classList.remove('completed');
-                    }
-                }
-
-                // Persist to localStorage
-                setCheckboxState(taskId, isChecked);
-
-                // Recalculate and update all progress indicators
-                refreshAllProgress();
-            }
-
-            // ----------------------------------------------------------------
-            // 7. PROGRESS CALCULATION
-            // Calculates completion progress at the total, week, and day levels.
-            // ----------------------------------------------------------------
-
-            /**
-             * Calculates progress for an entire week.
-             *
-             * @param {Object} week
-             * @param {Object} savedStates
-             * @returns {{ total: number, completed: number, percent: number }}
-             */
-            function calculateProgress(week, savedStates) {
-                let total = 0;
-                let completed = 0;
-                week.days.forEach(day => {
-                    day.tasks.forEach(task => {
-                        total++;
-                        const isChecked = (task.id in savedStates) ? savedStates[task.id] : task.checked;
-                        if (isChecked) completed++;
-                    });
-                });
-                return {
-                    total,
-                    completed,
-                    percent: total > 0 ? Math.round((completed / total) * 100) : 0,
-                };
-            }
-
-            /**
-             * Calculates progress for a single day.
-             *
-             * @param {Object} day
-             * @param {Object} savedStates
-             * @returns {{ total: number, completed: number, percent: number }}
-             */
-            function calculateDayProgress(day, savedStates) {
-                let total = 0;
-                let completed = 0;
-                day.tasks.forEach(task => {
-                    total++;
-                    const isChecked = (task.id in savedStates) ? savedStates[task.id] : task.checked;
-                    if (isChecked) completed++;
-                });
-                return {
-                    total,
-                    completed,
-                    percent: total > 0 ? Math.round((completed / total) * 100) : 0,
-                };
-            }
-
-            /**
-             * Updates the total progress bar at the top of the app.
-             *
-             * @param {Array} weeksData
-             * @param {Object} savedStates
-             */
-            function updateTotalProgress(weeksData, savedStates) {
-                let total = 0;
-                let completed = 0;
-                if (weeksData) {
-                    weeksData.forEach(week => {
-                        const wp = calculateProgress(week, savedStates);
-                        total += wp.total;
-                        completed += wp.completed;
-                    });
-                }
-                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-                dom.totalProgressBar.style.width = percent + '%';
-                dom.totalProgressLabel.textContent = percent + '%';
-                dom.totalProgressSection.style.display = (total > 0) ? 'flex' : 'none';
-            }
-
-            /**
-             * Refreshes all progress indicators in the DOM after a checkbox change.
-             * This updates: total progress bar, week badges, day mini-progress,
-             * and the visual dot states.
-             */
-            function refreshAllProgress() {
-                const savedStates = loadCheckboxStates();
-                const weeksData = window._currentWeeksData;
-                if (!weeksData) return;
-
-                // Update total progress
-                updateTotalProgress(weeksData, savedStates);
-
-                // Update each week card's progress badge
-                weeksData.forEach(week => {
-                    const card = document.querySelector('[data-week-id="' + week.id + '"]');
-                    if (!card) return;
-                    const wp = calculateProgress(week, savedStates);
-                    const badge = card.querySelector('.week-progress-badge');
-                    if (badge) {
-                        badge.textContent = wp.completed + '/' + wp.total + ' done';
-                        if (wp.percent >= 100) {
-                            badge.classList.add('complete');
-                        } else {
-                            badge.classList.remove('complete');
-                        }
-                    }
-                    // Update day progress
-                    week.days.forEach(day => {
-                        const daySection = card.querySelector('[data-day-id="' + day.id + '"]');
-                        if (!daySection) return;
-                        const dp = calculateDayProgress(day, savedStates);
-                        const mini = daySection.querySelector('.day-progress-mini');
-                        const dot = daySection.querySelector('.day-dot');
-                        if (mini) {
-                            mini.textContent = dp.completed + '/' + dp.total;
-                            if (dp.percent >= 100) {
-                                mini.classList.add('complete');
-                            } else {
-                                mini.classList.remove('complete');
-                            }
-                        }
-                        if (dot) {
-                            if (dp.percent >= 100) {
-                                dot.classList.add('complete');
-                            } else {
-                                dot.classList.remove('complete');
-                            }
-                        }
-                    });
-                });
-            }
-
-            // ----------------------------------------------------------------
-            // 8. SCROLL LISTENER
-            // Adds a subtle border to the sticky header when scrolled.
-            // ----------------------------------------------------------------
-            function attachScrollListener() {
-                let scrollTicking = false;
-                window.addEventListener('scroll', function() {
-                    if (!scrollTicking) {
-                        requestAnimationFrame(() => {
-                            const scrollY = window.scrollY;
-                            if (scrollY > 8) {
-                                dom.appHeader.classList.add('scrolled');
-                            } else {
-                                dom.appHeader.classList.remove('scrolled');
-                            }
-                            scrollTicking = false;
-                        });
-                        scrollTicking = true;
-                    }
-                }, { passive: true });
-            }
-
-            // ----------------------------------------------------------------
-            // 9. DATA FETCHING & SYNC
-            // Fetches lessons.md, handles online/offline states,
-            // and triggers re-renders when data changes.
-            // ----------------------------------------------------------------
-
-            /**
-             * Fetches lessons.md from the server.
-             * The service worker intercepts this and applies
-             * stale-while-revalidate caching automatically.
-             *
-             * @returns {Promise<string>} The markdown content
-             */
-            async function fetchLessonsMarkdown() {
-                const response = await fetch(CONFIG.lessonsFile, {
-                    // Avoid aggressive caching by the browser; let the SW handle it
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch lessons.md: HTTP ' + response.status);
-                }
-                return await response.text();
-            }
-
-            /**
-             * Updates the sync status indicator in the header.
-             *
-             * @param {'online'|'offline'|'syncing'} status
-             */
-            function updateSyncStatus(status) {
-                const dot = dom.syncDot;
-                const label = dom.syncLabel;
-                dot.classList.remove('offline', 'syncing');
-                switch (status) {
-                    case 'online':
-                        dot.style.background = 'var(--success)';
-                        label.textContent = 'Online';
-                        break;
-                    case 'offline':
-                        dot.classList.add('offline');
-                        label.textContent = 'Offline';
-                        break;
-                    case 'syncing':
-                        dot.classList.add('syncing');
-                        label.textContent = 'Syncing…';
-                        break;
-                    default:
-                        label.textContent = 'Ready';
-                }
-            }
-
-            /**
-             * Detects the current online/offline status.
-             * @returns {boolean}
-             */
-            function isOnline() {
-                return navigator.onLine !== false;
-            }
-
-            // ----------------------------------------------------------------
-            // 10. SERVICE WORKER REGISTRATION
-            // Registers the service worker for offline support and caching.
-            // ----------------------------------------------------------------
-
-            /**
-             * Registers the service worker if the browser supports it.
-             * The SW handles caching of static assets and lessons.md
-             * with appropriate strategies.
-             */
-            async function registerServiceWorker() {
-                if (!('serviceWorker' in navigator)) {
-                    console.warn('Service Worker not supported in this browser.');
-                    updateSyncStatus(isOnline() ? 'online' : 'offline');
-                    return;
-                }
-
-                try {
-                    const registration = await navigator.serviceWorker.register('./sw.js', {
-                        scope: './',
-                    });
-                    console.log('Service Worker registered with scope:', registration.scope);
-
-                    // Listen for updates to the service worker
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        if (newWorker) {
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New SW available — could show an update prompt
-                                    console.log('New service worker available. Refresh to update.');
-                                }
-                            });
-                        }
-                    });
-
-                    // If there's a waiting worker, claim clients on reload
-                    if (registration.waiting) {
-                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                    }
-
-                    updateSyncStatus(isOnline() ? 'online' : 'offline');
-                } catch (err) {
-                    console.error('Service Worker registration failed:', err);
-                    updateSyncStatus(isOnline() ? 'online' : 'offline');
-                }
-            }
-
-            // ----------------------------------------------------------------
-            // 11. INITIALIZATION
-            // Orchestrates the full app startup sequence.
-            // ----------------------------------------------------------------
-
-            /**
-             * Main initialization function.
-             * 1. Caches DOM references
-             * 2. Registers the service worker
-             * 3. Loads saved checkbox states
-             * 4. Fetches lessons.md (or uses cached version)
-             * 5. Parses the markdown
-             * 6. Renders the UI
-             * 7. Sets up online/offline listeners
-             */
-            async function initApp() {
-                cacheDomReferences();
-                updateSyncStatus('syncing');
-
-                // Register SW in parallel with other setup
-                const swPromise = registerServiceWorker();
-
-                // Load saved states immediately (synchronous)
-                const savedStates = loadCheckboxStates();
-
-                // Attempt to fetch and render lessons data
-                try {
-                    const markdown = await fetchLessonsMarkdown();
-                    const weeksData = parseLessons(markdown);
-
-                    // Store globally for progress recalculation
-                    window._currentWeeksData = weeksData;
-
-                    // Render the app
-                    renderApp(weeksData, savedStates);
-                    updateSyncStatus(isOnline() ? 'online' : 'offline');
-
-                } catch (err) {
-                    console.error('Failed to load lessons.md:', err);
-                    // Show error state
-                    dom.mainContent.innerHTML = `
-                        <div class="error-state">
-                            <div class="error-icon">📡</div>
-                            <p>Unable to load the learning schedule.</p>
-                            <p style="font-size:0.85rem;color:var(--text-muted);">
-                                ${isOnline() ?
-                                    'The file <code>lessons.md</code> may be missing or unreachable.' :
-                                    'You are offline and no cached version is available. Please connect to the internet and try again.'}
-                            </p>
-                            <button class="retry-btn" onclick="location.reload()">Retry</button>
-                        </div>`;
-                    updateTotalProgress(null, savedStates);
-                    updateSyncStatus(isOnline() ? 'online' : 'offline');
-                }
-
-                // Wait for SW registration to complete
-                await swPromise;
-            }
-
-            // ----------------------------------------------------------------
-            // EVENT LISTENERS: Online/Offline detection
-            // When connectivity changes, update the sync indicator and
-            // optionally re-fetch lessons.md to get fresh content.
-            // ----------------------------------------------------------------
-            window.addEventListener('online', () => {
-                updateSyncStatus('online');
-                // Re-fetch lessons.md to get any updates
-                fetchLessonsMarkdown()
-                    .then(markdown => {
-                        const weeksData = parseLessons(markdown);
-                        const savedStates = loadCheckboxStates();
-                        // Only re-render if the data actually changed
-                        const newDataStr = JSON.stringify(weeksData);
-                        const oldDataStr = JSON.stringify(window._currentWeeksData);
-                        if (newDataStr !== oldDataStr) {
-                            window._currentWeeksData = weeksData;
-                            renderApp(weeksData, savedStates);
-                            console.log('Lessons updated from network.');
-                        }
-                    })
-                    .catch(err => {
-                        console.warn('Could not re-fetch lessons.md after coming online:', err);
-                    });
+    function renderApp(weeksData, savedStates) {
+        dom.mainContent.innerHTML = '';
+        if (!weeksData || weeksData.length === 0) {
+            dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📭</div><p>No learning schedule data found.</p><p style="font-size:0.85rem;color:var(--text-muted);">Please ensure <code>lessons.md</code> exists and contains valid data.</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
+            updateTotalProgress(weeksData, savedStates);
+            return;
+        }
+        weeksData.forEach(week => {
+            if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = true;
+            week.days.forEach(day => {
+                if (!(day.id in collapseState.days)) collapseState.days[day.id] = true;
             });
+        });
+        weeksData.forEach(week => {
+            const el = buildWeekElement(week, savedStates);
+            dom.mainContent.appendChild(el);
+        });
+        updateTotalProgress(weeksData, savedStates);
+        attachScrollListener();
+    }
 
-            window.addEventListener('offline', () => {
-                updateSyncStatus('offline');
-            });
+    function buildWeekElement(week, savedStates) {
+        const isExpanded = collapseState.weeks[week.id] !== false;
+        const wp = calculateProgress(week, savedStates);
+        const card = document.createElement('div');
+        card.className = 'week-card' + (isExpanded ? ' expanded' : '');
+        card.setAttribute('data-week-id', week.id);
+        let html = '';
+        html += '<div class="week-header" data-action="toggle-week" data-week-id="'+week.id+'">';
+        html += '<div class="week-title-group"><span class="week-icon">'+week.weekNumber+'</span><span class="week-title">'+escapeHtml(week.title)+'</span></div>';
+        html += '<span class="week-progress-badge'+(wp.percent>=100?' complete':'')+'">'+wp.completed+'/'+wp.total+' done</span>';
+        html += '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        html += '</div>';
+        if (week.metadata) html += '<div class="week-metadata">'+escapeHtml(week.metadata)+'</div>';
+        html += '<div class="week-body-wrapper"><div class="week-body-inner"><div class="week-body-content">';
+        week.days.forEach(day => { html += buildDayHtml(day, savedStates); });
+        html += '</div></div></div>';
+        card.innerHTML = html;
+        attachWeekEventListeners(card, week);
+        return card;
+    }
 
-            // ----------------------------------------------------------------
-            // Handle service worker messages (e.g., skip waiting)
-            // ----------------------------------------------------------------
-            navigator.serviceWorker?.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'CACHE_UPDATED') {
-                    console.log('Service worker cache updated:', event.data.url);
-                }
-            });
+    function buildDayHtml(day, savedStates) {
+        const isExpanded = collapseState.days[day.id] !== false;
+        const dp = calculateDayProgress(day, savedStates);
+        let html = '<div class="day-section'+(isExpanded?' expanded':'')+'" data-day-id="'+day.id+'">';
+        html += '<div class="day-header" data-action="toggle-day" data-day-id="'+day.id+'">';
+        html += '<div class="day-title-group"><span class="day-dot'+(dp.percent>=100?' complete':'')+'"></span><span class="day-title">'+escapeHtml(day.title)+'</span></div>';
+        html += '<span class="day-progress-mini'+(dp.percent>=100?' complete':'')+'">'+dp.completed+'/'+dp.total+'</span>';
+        html += '<svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        html += '</div>';
+        html += '<div class="day-body-wrapper"><div class="day-body-inner"><div class="day-body-content">';
+        day.tasks.forEach(task => { html += buildTaskHtml(task, savedStates); });
+        if (day.metadata) html += '<div class="day-metadata">'+escapeHtml(day.metadata)+'</div>';
+        html += '</div></div></div></div>';
+        return html;
+    }
 
-            // ----------------------------------------------------------------
-            // START THE APP
-            // ----------------------------------------------------------------
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initApp);
-            } else {
-                initApp();
+    function buildTaskHtml(task, savedStates) {
+        const state = savedStates[task.id] || { checked: task.checked, values: [] };
+        const isChecked = state.checked;
+        const savedValues = state.values || [];
+        let displayText = task.displayText;
+        // Split by blanks (_____)
+        const blankSegments = displayText.split(/_{2,}/);
+        let textHtml = '';
+        blankSegments.forEach((seg, idx) => {
+            textHtml += convertMarkdownLinksToHtml(escapeHtml(seg));
+            if (idx < blankSegments.length - 1) {
+                const value = savedValues[idx] || '';
+                // Create an inline input for the blank
+                textHtml += `<input class="fillable-input" data-blank-index="${idx}" data-task-id="${task.id}" placeholder="%" value="${escapeHtml(value)}">`;
             }
-        })();
-    </script>
+        });
+
+        let html = '<div class="task-item'+(isChecked?' completed':'')+'" data-task-id="'+task.id+'">';
+        html += '<span class="task-checkbox-wrap"><input type="checkbox" class="task-checkbox" data-task-id="'+task.id+'" '+(isChecked?'checked':'')+'></span>';
+        html += '<div class="task-content"><span class="task-text">'+textHtml+'</span>';
+        html += '<div class="task-badges">';
+        if (task.duration) html += '<span class="task-duration-badge">⏱ '+escapeHtml(task.duration)+'</span>';
+        if (task.isQuiz) html += '<span class="task-quiz-badge">📝 Quiz</span>';
+        task.links.forEach(link => {
+            html += '<a href="'+escapeHtml(link.url)+'" target="_blank" rel="noopener" class="task-link-badge">🔗 '+escapeHtml(link.text)+'</a>';
+        });
+        html += '</div></div></div>';
+        return html;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function attachWeekEventListeners(card, week) {
+        card.querySelector('.week-header')?.addEventListener('click', function(e) {
+            if (e.target.closest('a')) return;
+            toggleWeekCollapse(week.id, card);
+        });
+        card.querySelectorAll('.day-header').forEach(dh => {
+            dh.addEventListener('click', function(e) {
+                if (e.target.closest('a')) return;
+                const dayId = dh.getAttribute('data-day-id');
+                const sec = dh.closest('.day-section');
+                if (dayId && sec) toggleDayCollapse(dayId, sec);
+            });
+        });
+        card.querySelectorAll('.task-checkbox').forEach(cb => {
+            cb.addEventListener('change', function() { handleCheckboxChange(cb); });
+        });
+        // Listen for fillable input changes
+        card.querySelectorAll('.fillable-input').forEach(inp => {
+            inp.addEventListener('input', function() {
+                handleBlankInput(inp);
+            });
+            // also handle change for paste etc.
+            inp.addEventListener('change', function() {
+                handleBlankInput(inp);
+            });
+        });
+    }
+
+    function handleBlankInput(inputEl) {
+        const taskId = inputEl.getAttribute('data-task-id');
+        const blankIndex = parseInt(inputEl.getAttribute('data-blank-index'), 10);
+        setBlankValue(taskId, blankIndex, inputEl.value);
+    }
+
+    function toggleWeekCollapse(weekId, card) {
+        const expanded = card.classList.contains('expanded');
+        if (expanded) { card.classList.remove('expanded'); collapseState.weeks[weekId] = false; }
+        else { card.classList.add('expanded'); collapseState.weeks[weekId] = true; }
+    }
+
+    function toggleDayCollapse(dayId, sec) {
+        const expanded = sec.classList.contains('expanded');
+        if (expanded) { sec.classList.remove('expanded'); collapseState.days[dayId] = false; }
+        else { sec.classList.add('expanded'); collapseState.days[dayId] = true; }
+    }
+
+    function handleCheckboxChange(cb) {
+        const taskId = cb.getAttribute('data-task-id');
+        const checked = cb.checked;
+        const taskItem = cb.closest('.task-item');
+        if (taskItem) {
+            if (checked) taskItem.classList.add('completed');
+            else taskItem.classList.remove('completed');
+        }
+        setCheckboxState(taskId, checked);
+        refreshAllProgress();
+    }
+
+    function calculateProgress(week, savedStates) {
+        let total=0, completed=0;
+        week.days.forEach(day => {
+            day.tasks.forEach(task => {
+                total++;
+                const state = savedStates[task.id] || { checked: task.checked };
+                if (state.checked) completed++;
+            });
+        });
+        return { total, completed, percent: total>0?Math.round(completed/total*100):0 };
+    }
+
+    function calculateDayProgress(day, savedStates) {
+        let total=0, completed=0;
+        day.tasks.forEach(task => {
+            total++;
+            const state = savedStates[task.id] || { checked: task.checked };
+            if (state.checked) completed++;
+        });
+        return { total, completed, percent: total>0?Math.round(completed/total*100):0 };
+    }
+
+    function updateTotalProgress(weeksData, savedStates) {
+        let total=0, completed=0;
+        if (weeksData) {
+            weeksData.forEach(week => {
+                const wp = calculateProgress(week, savedStates);
+                total += wp.total; completed += wp.completed;
+            });
+        }
+        const percent = total>0?Math.round(completed/total*100):0;
+        dom.totalProgressBar.style.width = percent+'%';
+        dom.totalProgressLabel.textContent = percent+'%';
+        dom.totalProgressSection.style.display = total>0?'flex':'none';
+    }
+
+    function refreshAllProgress() {
+        const states = loadTaskStates();
+        const weeksData = window._currentWeeksData;
+        if (!weeksData) return;
+        updateTotalProgress(weeksData, states);
+        weeksData.forEach(week => {
+            const card = document.querySelector('[data-week-id="'+week.id+'"]');
+            if (!card) return;
+            const wp = calculateProgress(week, states);
+            const badge = card.querySelector('.week-progress-badge');
+            if (badge) {
+                badge.textContent = wp.completed+'/'+wp.total+' done';
+                badge.classList.toggle('complete', wp.percent>=100);
+            }
+            week.days.forEach(day => {
+                const sec = card.querySelector('[data-day-id="'+day.id+'"]');
+                if (!sec) return;
+                const dp = calculateDayProgress(day, states);
+                const mini = sec.querySelector('.day-progress-mini');
+                const dot = sec.querySelector('.day-dot');
+                if (mini) {
+                    mini.textContent = dp.completed+'/'+dp.total;
+                    mini.classList.toggle('complete', dp.percent>=100);
+                }
+                if (dot) dot.classList.toggle('complete', dp.percent>=100);
+            });
+        });
+    }
+
+    function attachScrollListener() {
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    dom.appHeader.classList.toggle('scrolled', window.scrollY > 8);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    async function fetchLessonsMarkdown() {
+        const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
+        if (!resp.ok) throw new Error('Failed to fetch lessons.md');
+        return await resp.text();
+    }
+
+    function updateSyncStatus(status) {
+        const dot = dom.syncDot;
+        dot.classList.remove('offline','syncing');
+        switch (status) {
+            case 'online': dot.style.background='var(--success)'; dom.syncLabel.textContent='Online'; break;
+            case 'offline': dot.classList.add('offline'); dom.syncLabel.textContent='Offline'; break;
+            case 'syncing': dot.classList.add('syncing'); dom.syncLabel.textContent='Syncing…'; break;
+        }
+    }
+
+    function isOnline() { return navigator.onLine !== false; }
+
+    async function registerServiceWorker() {
+        if (!('serviceWorker' in navigator)) { updateSyncStatus(isOnline()?'online':'offline'); return; }
+        try {
+            const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker?.addEventListener('statechange', () => {
+                    if (newWorker.state==='installed' && navigator.serviceWorker.controller) console.log('New SW ready.');
+                });
+            });
+            if (reg.waiting) reg.waiting.postMessage({ type:'SKIP_WAITING' });
+            updateSyncStatus(isOnline()?'online':'offline');
+        } catch(e) { console.error('SW reg failed', e); updateSyncStatus(isOnline()?'online':'offline'); }
+    }
+
+    async function initApp() {
+        cacheDomReferences();
+        updateSyncStatus('syncing');
+        const swPromise = registerServiceWorker();
+        const savedStates = loadTaskStates();
+        try {
+            const md = await fetchLessonsMarkdown();
+            const weeksData = parseLessons(md);
+            window._currentWeeksData = weeksData;
+            renderApp(weeksData, savedStates);
+            updateSyncStatus(isOnline()?'online':'offline');
+        } catch(err) {
+            console.error('Failed to load lessons:', err);
+            dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📡</div><p>Unable to load schedule.</p><p style="font-size:0.85rem;color:var(--text-muted);">${isOnline()?'<code>lessons.md</code> missing?':'Offline and no cache. Connect and retry.'}</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
+            updateTotalProgress(null, savedStates);
+            updateSyncStatus(isOnline()?'online':'offline');
+        }
+        await swPromise;
+    }
+
+    window.addEventListener('online', () => {
+        updateSyncStatus('online');
+        fetchLessonsMarkdown().then(md => {
+            const weeksData = parseLessons(md);
+            if (JSON.stringify(weeksData) !== JSON.stringify(window._currentWeeksData)) {
+                window._currentWeeksData = weeksData;
+                renderApp(weeksData, loadTaskStates());
+            }
+        }).catch(() => {});
+    });
+    window.addEventListener('offline', () => updateSyncStatus('offline'));
+
+    navigator.serviceWorker?.addEventListener('message', (e) => {
+        if (e.data?.type==='CACHE_UPDATED') console.log('Cache updated:', e.data.url);
+    });
+
+    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', initApp);
+    else initApp();
+})();
+</script>
 </body>
 </html>
