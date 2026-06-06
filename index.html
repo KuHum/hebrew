@@ -42,7 +42,6 @@
             --float-btn-shadow: 0 2px 8px rgba(0,0,0,0.12);
         }
 
-        /* Dark mode overrides */
         :root[data-theme="dark"] {
             --bg: #1a1a1a;
             --card-bg: #2a2a2a;
@@ -110,7 +109,6 @@
         .retry-btn { margin-top: 16px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast); }
         .retry-btn:hover { background: var(--accent-dark); }
 
-        /* Attribution line */
         .attribution {
             font-size: 0.65rem;
             color: var(--text-muted);
@@ -123,7 +121,6 @@
             text-underline-offset: 2px;
         }
 
-        /* Average time note */
         .avg-note {
             text-align: center;
             font-size: 0.8rem;
@@ -132,7 +129,6 @@
             font-style: italic;
         }
 
-        /* Dark mode toggle button */
         .theme-toggle-btn {
             background: none;
             border: 1px solid var(--card-border);
@@ -147,56 +143,29 @@
             transition: background var(--transition-fast);
             flex-shrink: 0;
         }
-        .theme-toggle-btn:hover {
-            background: var(--accent-light);
-        }
+        .theme-toggle-btn:hover { background: var(--accent-light); }
 
-        /* Export/Import buttons */
-        .tool-buttons {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
+        .tool-buttons { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
         .tool-btn {
-            font-size: 0.7rem;
-            padding: 4px 10px;
+            font-size: 0.7rem; padding: 4px 10px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-sm);
-            background: var(--card-bg);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
+            background: var(--card-bg); color: var(--text-secondary);
+            cursor: pointer; transition: all var(--transition-fast);
             white-space: nowrap;
         }
-        .tool-btn:hover {
-            background: var(--accent-light);
-            color: var(--text-primary);
-        }
+        .tool-btn:hover { background: var(--accent-light); color: var(--text-primary); }
 
-        /* Jump to current week floating button */
         .jump-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 1000;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--float-btn-bg);
-            box-shadow: var(--float-btn-shadow);
+            position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--float-btn-bg); box-shadow: var(--float-btn-shadow);
             border: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--accent);
             transition: transform var(--transition-fast), box-shadow var(--transition-fast);
         }
-        .jump-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        }
+        .jump-btn:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
 
         .week-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); box-shadow: var(--card-shadow); margin-bottom: 16px; overflow: hidden; transition: box-shadow var(--transition-smooth), background var(--transition-smooth); }
         .week-card:hover { box-shadow: var(--card-shadow-hover); }
@@ -250,36 +219,22 @@
         .task-link-badge:hover { background: #dde9ed; }
         .task-quiz-badge { font-size: 0.7rem; font-weight: 500; background: #fdf4e8; color: #b8783b; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
 
-        /* Fillable blank styling */
         .fillable-input {
             display: inline-block;
-            width: auto;
-            min-width: 2.5em;
-            max-width: 4em;
-            padding: 0 2px;
-            font-size: inherit;
-            font-family: inherit;
-            color: var(--text-primary);
-            background: var(--input-bg);
-            border: none;
-            border-bottom: 2px dashed var(--input-border);
-            border-radius: 2px;
-            text-align: center;
+            width: auto; min-width: 2.5em; max-width: 4em;
+            padding: 0 2px; font-size: inherit; font-family: inherit;
+            color: var(--text-primary); background: var(--input-bg);
+            border: none; border-bottom: 2px dashed var(--input-border);
+            border-radius: 2px; text-align: center;
             transition: border-color var(--transition-fast), background var(--transition-fast);
-            outline: none;
-            margin: 0 2px;
-            vertical-align: baseline;
+            outline: none; margin: 0 2px; vertical-align: baseline;
         }
         .fillable-input:focus {
             background: #ffffff;
             border-bottom-color: var(--input-focus);
             box-shadow: 0 1px 0 0 rgba(74,124,140,0.3);
         }
-        .fillable-input::placeholder {
-            color: var(--text-muted);
-            opacity: 0.7;
-            font-style: italic;
-        }
+        .fillable-input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
 
         @media (max-width:480px) {
             .app-container { padding: 10px 10px 32px; }
@@ -334,13 +289,11 @@
     <main class="main-content" id="mainContent">
         <div class="loading-state" id="loadingState"><div class="loading-spinner"></div><p>Loading your learning schedule&hellip;</p></div>
     </main>
-    <!-- Floating jump button -->
     <button class="jump-btn" id="jumpBtn" title="Jump to current week" aria-label="Jump to current week">
         <span style="font-size:1.2rem;">📍</span>
     </button>
 </div>
 
-<!-- Hidden file input for import -->
 <input type="file" id="importFileInput" accept=".json" style="display:none;">
 
 <script>
@@ -372,7 +325,7 @@
         dom.importFileInput = document.getElementById('importFileInput');
     }
 
-    // ---------- Utility ----------
+    // ---------- Utility functions (same as before) ----------
     function generateTaskId(weekTitle, dayTitle, taskText) {
         const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
         let hash = 0;
@@ -535,7 +488,6 @@
                 pendingMetadata = null;
             }
         }
-        // Flush any remaining metadata
         if (pendingMetadata && currentDay) currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
         else if (pendingMetadata && currentWeek && !currentDay) currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
         return weeks;
@@ -547,15 +499,14 @@
     function renderApp(weeksData, savedStates) {
         dom.mainContent.innerHTML = '';
         if (!weeksData || weeksData.length === 0) {
-            dom.mainContent.innerHTML = `<div class="error-state">...</div>`; // simplified
+            dom.mainContent.innerHTML = `<div class="error-state"><p>No schedule data found.</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
             updateTotalProgress(weeksData, savedStates);
             return;
         }
-        // Initialize collapse: weeks collapsed by default
         weeksData.forEach(week => {
             if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = false;
             week.days.forEach(day => {
-                if (!(day.id in collapseState.days)) collapseState.days[day.id] = true; // days expanded inside opened week
+                if (!(day.id in collapseState.days)) collapseState.days[day.id] = true;
             });
         });
         weeksData.forEach(week => {
@@ -564,7 +515,6 @@
         });
         updateTotalProgress(weeksData, savedStates);
         attachScrollListener();
-        // Build reverse map for export/import fallback
         buildFallbackMap(weeksData);
     }
 
@@ -586,10 +536,9 @@
         let html = '';
         html += '<div class="week-header" data-action="toggle-week" data-week-id="'+week.id+'">';
         html += '<div class="week-title-group"><span class="week-icon">'+week.weekNumber+'</span><span class="week-title">'+escapeHtml(week.title)+'</span></div>';
-        html += '<span class="week-progress-badge'+(wp.percent>=100?' complete':'')+'">'+wp.completed+'/'+wp.total+' done</span>';
+        html += '<span class="week-progress-badge'+(wp.completed===wp.total?' complete':'')+'">'+wp.completed+'/'+wp.total+' done</span>';
         html += '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         html += '</div>';
-        // No week metadata rendering
         html += '<div class="week-body-wrapper"><div class="week-body-inner"><div class="week-body-content">';
         week.days.forEach(day => { html += buildDayHtml(day, savedStates); });
         html += '</div></div></div>';
@@ -603,13 +552,12 @@
         const dp = calculateDayProgress(day, savedStates);
         let html = '<div class="day-section'+(isExpanded?' expanded':'')+'" data-day-id="'+day.id+'">';
         html += '<div class="day-header" data-action="toggle-day" data-day-id="'+day.id+'">';
-        html += '<div class="day-title-group"><span class="day-dot'+(dp.percent>=100?' complete':'')+'"></span><span class="day-title">'+escapeHtml(day.title)+'</span></div>';
-        html += '<span class="day-progress-mini'+(dp.percent>=100?' complete':'')+'">'+dp.completed+'/'+dp.total+'</span>';
+        html += '<div class="day-title-group"><span class="day-dot'+(dp.completed===dp.total?' complete':'')+'"></span><span class="day-title">'+escapeHtml(day.title)+'</span></div>';
+        html += '<span class="day-progress-mini'+(dp.completed===dp.total?' complete':'')+'">'+dp.completed+'/'+dp.total+'</span>';
         html += '<svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         html += '</div>';
         html += '<div class="day-body-wrapper"><div class="day-body-inner"><div class="day-body-content">';
         day.tasks.forEach(task => { html += buildTaskHtml(task, savedStates); });
-        // No day metadata rendering
         html += '</div></div></div></div>';
         return html;
     }
@@ -709,7 +657,7 @@
                 if (state.checked) completed++;
             });
         });
-        return { total, completed, percent: total>0 ? (completed/total)*100 : 0 }; // not rounded
+        return { total, completed, percent: total>0 ? (completed/total)*100 : 0 };
     }
 
     function calculateDayProgress(day, savedStates) {
@@ -770,10 +718,11 @@
         const weeksData = window._currentWeeksData;
         const states = loadTaskStates();
         if (!weeksData) return;
-        // Find first week with progress < 100%
-        const firstIncomplete = weeksData.find(week => calculateProgress(week, states).completed < calculateProgress(week, states).total);
+        const firstIncomplete = weeksData.find(week => {
+            const p = calculateProgress(week, states);
+            return p.completed < p.total;
+        });
         const targetWeekId = firstIncomplete ? firstIncomplete.id : weeksData[weeksData.length-1].id;
-        // Collapse all weeks, expand only target
         weeksData.forEach(week => {
             const card = document.querySelector('[data-week-id="'+week.id+'"]');
             if (!card) return;
@@ -785,11 +734,8 @@
                 collapseState.weeks[week.id] = false;
             }
         });
-        // Scroll to target
         const targetCard = document.querySelector('[data-week-id="'+targetWeekId+'"]');
-        if (targetCard) {
-            targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // ---------- Dark mode ----------
@@ -819,11 +765,9 @@
     // ---------- Export / Import ----------
     function exportProgress() {
         const states = loadTaskStates();
-        const weeksData = window._currentWeeksData;
         const fallbackMap = window._fallbackMap || {};
         const exportData = { version: 1, tasks: {} };
         for (const [taskId, state] of Object.entries(states)) {
-            // Find the task's fallback key by reverse lookup (taskId → fallback key)
             let fallbackKey = '';
             for (const [key, id] of Object.entries(fallbackMap)) {
                 if (id === taskId) { fallbackKey = key; break; }
@@ -855,7 +799,6 @@
                 const fallbackMap = window._fallbackMap || {};
                 for (const [oldId, taskState] of Object.entries(data.tasks)) {
                     let targetId = oldId;
-                    // Direct match
                     if (!(targetId in states) && taskState.fallbackKey && fallbackMap[taskState.fallbackKey]) {
                         targetId = fallbackMap[taskState.fallbackKey];
                     }
@@ -877,7 +820,7 @@
         reader.readAsText(file);
     }
 
-    // ---------- Scroll listener ----------
+    // ---------- Scroll ----------
     function attachScrollListener() {
         let ticking = false;
         window.addEventListener('scroll', () => {
@@ -891,7 +834,7 @@
         }, { passive: true });
     }
 
-    // ---------- Network & SW ----------
+    // ---------- Network ----------
     async function fetchLessonsMarkdown() {
         const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
         if (!resp.ok) throw new Error('Failed to fetch lessons.md');
@@ -928,10 +871,25 @@
         } catch(e) { console.error('SW reg failed', e); updateSyncStatus(isOnline()?'online':'offline'); }
     }
 
+    // ---------- Global event listeners (attached after DOM refs are cached) ----------
+    function attachGlobalEventListeners() {
+        dom.themeToggleBtn.addEventListener('click', toggleTheme);
+        dom.jumpBtn.addEventListener('click', jumpToCurrentWeek);
+        dom.exportBtn.addEventListener('click', exportProgress);
+        dom.importBtn.addEventListener('click', () => dom.importFileInput.click());
+        dom.importFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                importProgress(e.target.files[0]);
+                e.target.value = '';
+            }
+        });
+    }
+
     // ---------- Init ----------
     async function initApp() {
         cacheDomReferences();
         applyTheme();
+        attachGlobalEventListeners();
         updateSyncStatus('syncing');
         const swPromise = registerServiceWorker();
         const savedStates = loadTaskStates();
@@ -950,7 +908,7 @@
         await swPromise;
     }
 
-    // Event listeners
+    // Online/offline events
     window.addEventListener('online', () => {
         updateSyncStatus('online');
         fetchLessonsMarkdown().then(md => {
@@ -967,24 +925,12 @@
         if (e.data?.type==='CACHE_UPDATED') console.log('Cache updated:', e.data.url);
     });
 
-    // Theme toggle
-    dom.themeToggleBtn.addEventListener('click', toggleTheme);
-
-    // Jump button
-    dom.jumpBtn.addEventListener('click', jumpToCurrentWeek);
-
-    // Export / Import
-    dom.exportBtn.addEventListener('click', exportProgress);
-    dom.importBtn.addEventListener('click', () => dom.importFileInput.click());
-    dom.importFileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            importProgress(e.target.files[0]);
-            e.target.value = ''; // allow re-import of same file
-        }
-    });
-
-    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', initApp);
-    else initApp();
+    // Start app when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
 })();
 </script>
 </body>
