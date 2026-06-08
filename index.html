@@ -77,10 +77,41 @@
         }
         .attribution a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
-        .total-progress-section { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-        .total-progress-bar-outer { flex: 1; height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
-        .total-progress-bar-inner { height: 100%; background: var(--success); border-radius: 3px; transition: width var(--transition-smooth); width: 0%; }
-        .total-progress-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+        /* ── NEW PROGRESS AREA ── */
+        .total-progress-section {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .progress-bar-outer {
+            width: 100%;
+            height: 6px;
+            background: var(--card-border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto 6px;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .progress-info {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.01em;
+        }
+        .baseline-update-note {
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-top: 4px;
+            cursor: pointer;
+            text-decoration: underline;
+            display: none;
+        }
+        .baseline-update-note.visible { display: block; }
+
         .main-content { margin-top: 12px; }
         .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
         .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--card-border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
@@ -88,14 +119,6 @@
         .error-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
         .retry-btn { margin-top: 16px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast); }
         .retry-btn:hover { background: var(--accent-dark); }
-
-        .avg-note {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin: 8px 0 0;
-            font-style: italic;
-        }
 
         /* Install button */
         .install-btn {
@@ -305,10 +328,11 @@
             Courtesy of <a href="https://freehebrew.online/" target="_blank" rel="noopener noreferrer">Aleph with Beth</a>
         </p>
         <div class="total-progress-section" id="totalProgressSection">
-            <div class="total-progress-bar-outer"><div class="total-progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
-            <span class="total-progress-label" id="totalProgressLabel">0.00%</span>
+            <div class="progress-bar-outer"><div class="progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
+            <div class="progress-info" id="progressInfo">Beginner · 0 Days Completed</div>
+            <div class="baseline-update-note" id="baselineUpdateNote">Updated curriculum available</div>
         </div>
-        <p class="avg-note">Each study day takes about 1 hour on average.</p>
+        <!-- "Each study day..." removed -->
     </header>
 
     <main class="main-content" id="mainContent">
@@ -362,7 +386,7 @@
     </button>
 </div>
 
-<!-- About overlay -->
+<!-- About overlay (unchanged except for the new "What Makes This Curriculum Special" section) -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -379,7 +403,7 @@
             • 52‑week structured schedule (310 study days)<br>
             • Offline‑first – works entirely without internet after first visit<br>
             • Fillable blanks for quiz scores<br>
-            • Progress tracking with percentage and visual bars<br>
+            • Progress tracking with percentage and visual rings<br>
             • Export / import progress to back up or move devices<br>
             • Installable as a standalone app
         </p>
@@ -441,7 +465,8 @@
         dom.mainContent = document.getElementById('mainContent');
         dom.loadingState = document.getElementById('loadingState');
         dom.totalProgressBar = document.getElementById('totalProgressBar');
-        dom.totalProgressLabel = document.getElementById('totalProgressLabel');
+        dom.progressInfo = document.getElementById('progressInfo');
+        dom.baselineUpdateNote = document.getElementById('baselineUpdateNote');
         dom.totalProgressSection = document.getElementById('totalProgressSection');
         dom.exportBtn = document.getElementById('exportBtn');
         dom.importBtn = document.getElementById('importBtn');
@@ -821,18 +846,80 @@
         return { total, completed, percent: total>0 ? (completed/total)*100 : 0 };
     }
 
-    function updateTotalProgress(weeksData, savedStates) {
-        let total=0, completed=0;
-        if (weeksData) {
-            weeksData.forEach(week => {
-                const wp = calculateProgress(week, savedStates);
-                total += wp.total; completed += wp.completed;
+    // --- Baseline & Level Logic ---
+    function getCompletedDays(weeksData, savedStates) {
+        let completedDays = 0;
+        if (!weeksData) return 0;
+        weeksData.forEach(week => {
+            week.days.forEach(day => {
+                const dp = calculateDayProgress(day, savedStates);
+                if (dp.completed === dp.total && dp.total > 0) completedDays++;
             });
+        });
+        return completedDays;
+    }
+
+    function getTotalDays(weeksData) {
+        let totalDays = 0;
+        weeksData.forEach(week => { totalDays += week.days.length; });
+        return totalDays;
+    }
+
+    function getLevel(percent) {
+        if (percent >= 100) return 'Graduate';
+        if (percent >= 75) return 'Senior';
+        if (percent >= 50) return 'Reader';
+        if (percent >= 25) return 'Junior';
+        return 'Beginner';
+    }
+
+    function updateTotalProgress(weeksData, savedStates) {
+        const currentTotalDays = getTotalDays(weeksData);
+        let baselineTotalDays = localStorage.getItem('hebrewBaselineTotalDays');
+        if (!baselineTotalDays) {
+            baselineTotalDays = currentTotalDays;
+            localStorage.setItem('hebrewBaselineTotalDays', baselineTotalDays);
+        } else {
+            baselineTotalDays = parseInt(baselineTotalDays, 10);
         }
-        const percent = total>0 ? (completed/total)*100 : 0;
-        dom.totalProgressBar.style.width = percent + '%';
-        dom.totalProgressLabel.textContent = percent.toFixed(2) + '%';
-        dom.totalProgressSection.style.display = total>0?'flex':'none';
+
+        const completedDays = getCompletedDays(weeksData, savedStates);
+        const barPercent = baselineTotalDays > 0 ? Math.min(100, (completedDays / baselineTotalDays) * 100) : 0;
+        const percentForLevel = baselineTotalDays > 0 ? (completedDays / baselineTotalDays) * 100 : 0;
+        const candidateLevel = getLevel(percentForLevel);
+
+        // Highest level stored to prevent demotion
+        let highestLevel = localStorage.getItem('hebrewHighestLevel') || 'Beginner';
+        const levelsOrder = ['Beginner','Junior','Reader','Senior','Graduate'];
+        if (levelsOrder.indexOf(candidateLevel) > levelsOrder.indexOf(highestLevel)) {
+            highestLevel = candidateLevel;
+            localStorage.setItem('hebrewHighestLevel', highestLevel);
+        }
+
+        dom.totalProgressBar.style.width = barPercent + '%';
+        dom.progressInfo.textContent = `${highestLevel} · ${completedDays} Days Completed`;
+
+        // Show update note if curriculum expanded
+        if (currentTotalDays > baselineTotalDays) {
+            dom.baselineUpdateNote.classList.add('visible');
+            dom.baselineUpdateNote.onclick = function() {
+                localStorage.setItem('hebrewBaselineTotalDays', currentTotalDays);
+                // Recalculate with new baseline – level won't drop because highestLevel is kept
+                const newPercent = (completedDays / currentTotalDays) * 100;
+                const newCandidate = getLevel(newPercent);
+                if (levelsOrder.indexOf(newCandidate) > levelsOrder.indexOf(highestLevel)) {
+                    highestLevel = newCandidate;
+                    localStorage.setItem('hebrewHighestLevel', highestLevel);
+                }
+                dom.totalProgressBar.style.width = Math.min(100, newPercent) + '%';
+                dom.progressInfo.textContent = `${highestLevel} · ${completedDays} Days Completed`;
+                dom.baselineUpdateNote.classList.remove('visible');
+            };
+        } else {
+            dom.baselineUpdateNote.classList.remove('visible');
+        }
+
+        dom.totalProgressSection.style.display = 'block';
     }
 
     function refreshAllProgress() {
