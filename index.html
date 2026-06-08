@@ -299,6 +299,50 @@
         }
         .btn-primary:hover { background: var(--accent-dark); }
 
+        /* ── Celebration toast ── */
+        .level-toast {
+            position: fixed; top: 16px; left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: white; border: 1px solid var(--accent-light);
+            box-shadow: var(--card-shadow-hover);
+            border-radius: var(--radius-md);
+            padding: 10px 20px;
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 500; color: var(--text-primary);
+            z-index: 3000; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            white-space: nowrap;
+        }
+        .level-toast.show {
+            opacity: 1; pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast-icon { font-size: 1.3rem; }
+
+        /* ── Graduation overlay ── */
+        .grad-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 4000; visibility: hidden; opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+        }
+        .grad-backdrop.visible { visibility: visible; opacity: 1; }
+        .grad-card {
+            background: white; border-radius: var(--radius-lg);
+            padding: 32px 24px; max-width: 340px; width: 90%;
+            text-align: center; box-shadow: var(--card-shadow-hover);
+            position: relative;
+        }
+        .grad-icon { font-size: 3rem; margin-bottom: 8px; }
+        .grad-title { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .grad-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; }
+        .grad-close {
+            background: var(--accent); color: white; border: none;
+            padding: 8px 20px; border-radius: var(--radius-sm);
+            font-weight: 600; cursor: pointer;
+        }
+        .grad-close:hover { background: var(--accent-dark); }
+
         @media (max-width:480px) {
             .app-container { padding: 10px 10px 32px; }
             .app-title { font-size: 1.5rem; }
@@ -332,7 +376,6 @@
             <div class="progress-info" id="progressInfo">Beginner · 0 Days Completed</div>
             <div class="baseline-update-note" id="baselineUpdateNote">Updated curriculum available</div>
         </div>
-        <!-- "Each study day..." removed -->
     </header>
 
     <main class="main-content" id="mainContent">
@@ -384,9 +427,28 @@
             <path d="M2 12h12" stroke="#fff" stroke-width="1.7" stroke-linecap="round"></path>
         </svg>
     </button>
+
+    <!-- Level‑up toast -->
+    <div class="level-toast" id="levelToast">
+        <span class="toast-icon">🎉</span>
+        <span id="toastText"></span>
+    </div>
+
+    <!-- Graduation overlay -->
+    <div class="grad-backdrop" id="gradOverlay">
+        <div class="grad-card">
+            <div class="grad-icon">🎓</div>
+            <div class="grad-title">Graduate</div>
+            <p class="grad-subtitle">
+                You’ve completed the entire<br>Aleph with Beth curriculum.<br>
+                <em>Soli Deo Gloria</em>
+            </p>
+            <button class="grad-close" id="gradCloseBtn">Close</button>
+        </div>
+    </div>
 </div>
 
-<!-- About overlay (unchanged except for the new "What Makes This Curriculum Special" section) -->
+<!-- About overlay (unchanged) -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -403,7 +465,7 @@
             • 52‑week structured schedule (310 study days)<br>
             • Offline‑first – works entirely without internet after first visit<br>
             • Fillable blanks for quiz scores<br>
-            • Progress tracking with percentage and visual rings<br>
+            • Progress tracking with percentage and visual bars<br>
             • Export / import progress to back up or move devices<br>
             • Installable as a standalone app
         </p>
@@ -481,6 +543,10 @@
         dom.feedbackTextarea = document.getElementById('feedbackTextarea');
         dom.sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
         dom.installBtn = document.getElementById('installBtn');
+        dom.levelToast = document.getElementById('levelToast');
+        dom.toastText = document.getElementById('toastText');
+        dom.gradOverlay = document.getElementById('gradOverlay');
+        dom.gradCloseBtn = document.getElementById('gradCloseBtn');
     }
 
     // ---------- Utility ----------
@@ -919,6 +985,28 @@
             dom.baselineUpdateNote.classList.remove('visible');
         }
 
+        // ── Celebrations ──
+        const lastCelebrated = localStorage.getItem('hebrewLastCelebratedLevel') || '';
+        const graduationDone = localStorage.getItem('hebrewGraduationCelebrated') === 'true';
+
+        if (highestLevel !== lastCelebrated) {
+            // New level reached (or first time seeing this level)
+            if (highestLevel === 'Graduate' && !graduationDone) {
+                // Show graduation overlay
+                dom.gradOverlay.classList.add('visible');
+                localStorage.setItem('hebrewGraduationCelebrated', 'true');
+                localStorage.setItem('hebrewLastCelebratedLevel', 'Graduate');
+            } else if (highestLevel !== 'Graduate') {
+                // Show toast for the new level
+                dom.toastText.textContent = `You've reached ${highestLevel}!`;
+                dom.levelToast.classList.add('show');
+                localStorage.setItem('hebrewLastCelebratedLevel', highestLevel);
+                setTimeout(() => {
+                    dom.levelToast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
         dom.totalProgressSection.style.display = 'block';
     }
 
@@ -1157,6 +1245,12 @@
         });
         dom.sendFeedbackBtn.addEventListener('click', sendFeedback);
         dom.installBtn.addEventListener('click', installApp);
+        dom.gradCloseBtn.addEventListener('click', () => {
+            dom.gradOverlay.classList.remove('visible');
+        });
+        dom.gradOverlay.addEventListener('click', (e) => {
+            if (e.target === dom.gradOverlay) dom.gradOverlay.classList.remove('visible');
+        });
     }
 
     window.addEventListener('online', () => {
