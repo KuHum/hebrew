@@ -381,7 +381,16 @@
             • Fillable blanks for quiz scores<br>
             • Progress tracking with percentage and visual bars<br>
             • Export / import progress to back up or move devices<br>
-            • Jump to your current week instantly
+            • Installable as a standalone app
+        </p>
+        <h3>What Makes This Curriculum Special</h3>
+        <p>
+            Aleph with Beth uses the <strong>Comprehensible Input</strong> method – the same natural way you learned your first language. 
+            No tedious grammar drills, no memorising rules. Just watch, listen, and gradually understand. 
+            You start with basic words and phrases without any text, just like a child learning to speak. 
+            The alphabet is introduced slowly after you’ve built a foundation of understanding. 
+            This stress‑free approach lets your brain absorb the language at your own pace, from the comfort of home. 
+            It’s free forever, designed to serve the global Church and level the playing field for everyone.
         </p>
         <div class="overlay-divider"><div class="overlay-divider-line"></div><div class="overlay-divider-dot"></div><div class="overlay-divider-line"></div></div>
         <h3>Credits</h3>
@@ -450,7 +459,6 @@
     }
 
     // ---------- Utility ----------
-    // Fixed generateTaskId: now includes a unique index to prevent duplicates
     function generateTaskId(weekTitle, dayTitle, taskText, index = 0) {
         const composite = `${weekTitle}::${dayTitle}::${index}::${taskText.trim()}`;
         let hash = 0;
@@ -601,7 +609,6 @@
                 const links = extractLinks(rawText);
                 const quizFlag = isQuizTask(rawText);
                 const blankCount = countBlanks(rawText);
-                // Use the current length as unique index (before pushing)
                 const taskIndex = currentDay.tasks.length;
                 const taskId = generateTaskId(currentWeek.title, currentDay.title, rawText, taskIndex);
                 currentDay.tasks.push({
