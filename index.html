@@ -362,7 +362,7 @@
     </button>
 </div>
 
-<!-- About overlay (same as before) -->
+<!-- About overlay -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -450,8 +450,9 @@
     }
 
     // ---------- Utility ----------
-    function generateTaskId(weekTitle, dayTitle, taskText) {
-        const composite = `${weekTitle}::${dayTitle}::${taskText.trim()}`;
+    // Fixed generateTaskId: now includes a unique index to prevent duplicates
+    function generateTaskId(weekTitle, dayTitle, taskText, index = 0) {
+        const composite = `${weekTitle}::${dayTitle}::${index}::${taskText.trim()}`;
         let hash = 0;
         for (let i = 0; i < composite.length; i++) {
             const char = composite.charCodeAt(i);
@@ -600,7 +601,9 @@
                 const links = extractLinks(rawText);
                 const quizFlag = isQuizTask(rawText);
                 const blankCount = countBlanks(rawText);
-                const taskId = generateTaskId(currentWeek.title, currentDay.title, rawText);
+                // Use the current length as unique index (before pushing)
+                const taskIndex = currentDay.tasks.length;
+                const taskId = generateTaskId(currentWeek.title, currentDay.title, rawText, taskIndex);
                 currentDay.tasks.push({
                     id: taskId, rawText, displayText: rawText,
                     checked: isChecked, duration, links, isQuiz: quizFlag, blankCount
@@ -619,7 +622,7 @@
 
     // ---------- Progress ring SVG helper ----------
     function progressRingSVG(percent, size = 24) {
-        const radius = size === 24 ? 9 : 8; // week: 24px -> r=9, day: 20px -> r=8
+        const radius = size === 24 ? 9 : 8;
         const circumference = 2 * Math.PI * radius;
         const offset = circumference * (1 - Math.min(percent, 100) / 100);
         const strokeWidth = size === 24 ? 1.8 : 1.6;
@@ -990,7 +993,6 @@
     }
 
     function checkInstalled() {
-        // If already installed (standalone display mode), hide button
         if (window.matchMedia('(display-mode: standalone)').matches) {
             dom.installBtn.classList.add('hidden');
         }
