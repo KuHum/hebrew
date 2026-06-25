@@ -54,7 +54,6 @@
         }
         .app-container { max-width: var(--max-width); margin: 0 auto; padding: 16px 16px 40px; }
 
-        /* ── Centered header (static) ── */
         .app-header {
             background: var(--bg);
             padding: 20px 0 12px;
@@ -77,10 +76,10 @@
         }
         .attribution a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
-        /* ── NEW PROGRESS AREA ── */
         .total-progress-section {
             margin-top: 10px;
             text-align: center;
+            position: relative;
         }
         .progress-bar-outer {
             width: 100%;
@@ -95,6 +94,12 @@
             background: var(--success);
             border-radius: 3px;
             transition: width 0.3s ease;
+        }
+        .progress-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
         }
         .progress-info {
             font-size: 0.8rem;
@@ -112,6 +117,89 @@
         }
         .baseline-update-note.visible { display: block; }
 
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .user-pill:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+        .user-pill svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent);
+        }
+        .user-pill .chevron-down {
+            width: 14px;
+            height: 14px;
+            margin-left: 2px;
+            transition: transform var(--transition-fast);
+        }
+        .user-pill.open .chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 6px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--card-shadow-hover);
+            padding: 8px;
+            z-index: 1500;
+            min-width: 180px;
+            display: none;
+            text-align: left;
+        }
+        .user-dropdown.visible {
+            display: block;
+        }
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            transition: background var(--transition-fast);
+        }
+        .user-dropdown-item:hover {
+            background: var(--accent-light);
+        }
+        .user-dropdown-item svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .user-dropdown-item .remove-icon {
+            color: #c44;
+        }
+        .user-dropdown-divider {
+            height: 1px;
+            background: var(--divider);
+            margin: 6px 0;
+        }
+
         .main-content { margin-top: 12px; }
         .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
         .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--card-border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
@@ -120,7 +208,6 @@
         .retry-btn { margin-top: 16px; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast); }
         .retry-btn:hover { background: var(--accent-dark); }
 
-        /* Install button */
         .install-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 1000;
             width: 48px; height: 48px; border-radius: 50%;
@@ -131,7 +218,6 @@
         .install-btn:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
         .install-btn.hidden { opacity: 0; pointer-events: none; }
 
-        /* Progress ring styles */
         .week-progress-ring, .day-progress-ring {
             display: flex; align-items: center; gap: 6px;
         }
@@ -201,7 +287,6 @@
         }
         .fillable-input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
 
-        /* Footer */
         .app-footer {
             margin-top: 24px;
             padding: 0 0 20px;
@@ -248,7 +333,6 @@
         .footer-read-more:hover { background: var(--accent-light); color: var(--accent-dark); }
         .footer-read-more svg { width: 14px; height: 14px; }
 
-        /* Overlay */
         .overlay-backdrop {
             position: fixed; inset: 0; z-index: 2000;
             background: rgba(0,0,0,0.4); display: none;
@@ -296,10 +380,38 @@
             border: none; border-radius: var(--radius-sm);
             padding: 10px 18px; font-weight: 600; cursor: pointer;
             transition: background var(--transition-fast);
+            display: inline-flex; align-items: center; gap: 8px; justify-content: center;
         }
         .btn-primary:hover { background: var(--accent-dark); }
 
-        /* ── Celebration toast ── */
+        .user-modal-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+            display: none; align-items: center; justify-content: center;
+            z-index: 2500; padding: 20px;
+        }
+        .user-modal-backdrop.visible { display: flex; }
+        .user-modal {
+            background: var(--card-bg); border-radius: var(--radius-lg);
+            padding: 24px; max-width: 320px; width: 100%;
+            box-shadow: var(--card-shadow-hover);
+        }
+        .user-modal h3 { font-size: 1rem; margin-bottom: 12px; }
+        .user-modal input {
+            width: 100%; padding: 8px 12px; border: 1px solid var(--card-border);
+            border-radius: var(--radius-sm); font-size: 0.9rem; margin-bottom: 12px;
+        }
+        .user-modal-actions {
+            display: flex; gap: 8px; justify-content: flex-end;
+        }
+        .btn-cancel {
+            background: none; border: 1px solid var(--card-border);
+            padding: 6px 16px; border-radius: var(--radius-sm); cursor: pointer;
+        }
+        .btn-save {
+            background: var(--accent); color: #fff; border: none;
+            padding: 6px 16px; border-radius: var(--radius-sm); cursor: pointer;
+        }
+
         .level-toast {
             position: fixed; top: 16px; left: 50%;
             transform: translateX(-50%) translateY(-20px);
@@ -319,7 +431,6 @@
         }
         .toast-icon { font-size: 1.3rem; }
 
-        /* ── Graduation overlay ── */
         .grad-backdrop {
             position: fixed; inset: 0; background: rgba(0,0,0,0.4);
             display: flex; align-items: center; justify-content: center;
@@ -373,8 +484,16 @@
         </p>
         <div class="total-progress-section" id="totalProgressSection">
             <div class="progress-bar-outer"><div class="progress-bar-inner" id="totalProgressBar" style="width:0%;"></div></div>
-            <div class="progress-info" id="progressInfo">Beginner · 0 Days Completed</div>
+            <div class="progress-info-row">
+                <div class="progress-info" id="progressInfo">Beginner · 0 Days Completed</div>
+                <div class="user-pill" id="userPill">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.5 7.063C16.5 10.258 14.57 13 12 13c-2.572 0-4.5-2.742-4.5-5.938C7.5 3.868 9.16 2 12 2s4.5 1.867 4.5 5.063zM4.102 20.142C4.487 20.6 6.145 22 12 22c5.855 0 7.512-1.4 7.898-1.857a.416.416 0 0 0 .09-.317C19.9 18.944 19.106 15 12 15s-7.9 3.944-7.989 4.826a.416.416 0 0 0 .091.317z"/></svg>
+                    <span id="userPillName">Student</span>
+                    <svg class="chevron-down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+            </div>
             <div class="baseline-update-note" id="baselineUpdateNote">Updated curriculum available</div>
+            <div class="user-dropdown" id="userDropdown"></div>
         </div>
     </header>
 
@@ -420,7 +539,6 @@
         </button>
     </footer>
 
-    <!-- Install button (hidden after installation) -->
     <button class="install-btn hidden" id="installBtn" title="Install app" aria-label="Install app">
         <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
             <path d="M8 1v9M8 10l-3-3M8 10l3-3" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -428,13 +546,11 @@
         </svg>
     </button>
 
-    <!-- Level‑up toast -->
     <div class="level-toast" id="levelToast">
         <span class="toast-icon">🎉</span>
         <span id="toastText"></span>
     </div>
 
-    <!-- Graduation overlay -->
     <div class="grad-backdrop" id="gradOverlay">
         <div class="grad-card">
             <div class="grad-icon">🎓</div>
@@ -448,7 +564,6 @@
     </div>
 </div>
 
-<!-- About overlay (unchanged) -->
 <div class="overlay-backdrop" id="aboutOverlay" aria-hidden="true">
     <div class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="aboutOverlayTitle">
         <button class="overlay-close-btn" id="aboutOverlayClose" aria-label="Close">✕</button>
@@ -502,10 +617,24 @@
         <input type="text" id="feedbackName" placeholder="Your name" maxlength="100" required>
         <input type="email" id="feedbackEmail" placeholder="Your email" maxlength="150" required>
         <textarea id="feedbackTextarea" rows="3" placeholder="Your message…"></textarea>
-        <button id="sendFeedbackBtn" class="btn-primary" style="width:100%;">📧 Send Message</button>
+        <button id="sendFeedbackBtn" class="btn-primary" style="width:100%;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L2 8.66667L11.5833 12.4167M22 2L15.3333 22L11.5833 12.4167M22 2L11.5833 12.4167"/></svg>
+            Send Message
+        </button>
         <p style="font-size:0.62rem;color:var(--text-faint);text-align:center;margin-top:6px;">
             Sent directly to the developer.
         </p>
+    </div>
+</div>
+
+<div class="user-modal-backdrop" id="userModalBackdrop">
+    <div class="user-modal">
+        <h3 id="userModalTitle">Edit Name</h3>
+        <input type="text" id="userNameInput" placeholder="Enter name" maxlength="30">
+        <div class="user-modal-actions">
+            <button class="btn-cancel" id="userModalCancel">Cancel</button>
+            <button class="btn-save" id="userModalSave">Save</button>
+        </div>
     </div>
 </div>
 
@@ -547,93 +676,89 @@
         dom.toastText = document.getElementById('toastText');
         dom.gradOverlay = document.getElementById('gradOverlay');
         dom.gradCloseBtn = document.getElementById('gradCloseBtn');
+        dom.userPill = document.getElementById('userPill');
+        dom.userPillName = document.getElementById('userPillName');
+        dom.userDropdown = document.getElementById('userDropdown');
+        dom.userModalBackdrop = document.getElementById('userModalBackdrop');
+        dom.userModalTitle = document.getElementById('userModalTitle');
+        dom.userNameInput = document.getElementById('userNameInput');
+        dom.userModalCancel = document.getElementById('userModalCancel');
+        dom.userModalSave = document.getElementById('userModalSave');
     }
 
-    // ---------- Utility ----------
-    function generateTaskId(weekTitle, dayTitle, taskText, index = 0) {
-        const composite = `${weekTitle}::${dayTitle}::${index}::${taskText.trim()}`;
-        let hash = 0;
-        for (let i = 0; i < composite.length; i++) {
-            const char = composite.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash |= 0;
+    // ---------- Multi‑user management ----------
+    const USER_LIST_KEY = 'hebrew-user-list';
+    const CURRENT_USER_KEY = 'hebrew-current-user';
+    const DEFAULT_USER = 'Student';
+
+    let currentUser = DEFAULT_USER;
+
+    function getUserList() {
+        try { return JSON.parse(localStorage.getItem(USER_LIST_KEY)) || []; } catch (e) { return []; }
+    }
+    function setUserList(users) { localStorage.setItem(USER_LIST_KEY, JSON.stringify(users)); }
+    function getCurrentUser() { return localStorage.getItem(CURRENT_USER_KEY) || DEFAULT_USER; }
+    function setCurrentUser(name) { localStorage.setItem(CURRENT_USER_KEY, name); currentUser = name; }
+    function getUserStorageKey(baseKey) { return `user-${currentUser}-${baseKey}`; }
+
+    function migrateOldDataIfNeeded() {
+        const oldTaskKey = CONFIG.storageKey;
+        if (localStorage.getItem(oldTaskKey) !== null) {
+            let users = getUserList();
+            if (!users.includes(DEFAULT_USER)) {
+                users.push(DEFAULT_USER);
+                setUserList(users);
+            }
+            const userPrefix = 'user-Student-';
+            const states = localStorage.getItem(oldTaskKey);
+            localStorage.setItem(userPrefix + 'aleph-beth-task-states', states);
+            localStorage.removeItem(oldTaskKey);
+            ['hebrewBaselineTotalDays','hebrewHighestLevel','hebrewLastCelebratedLevel','hebrewGraduationCelebrated'].forEach(key => {
+                const val = localStorage.getItem(key);
+                if (val !== null) {
+                    localStorage.setItem(`user-Student-${key}`, val);
+                    localStorage.removeItem(key);
+                }
+            });
         }
-        return 'task-' + Math.abs(hash).toString(36);
-    }
-
-    function convertMarkdownLinksToHtml(text) {
-        return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-            '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    }
-
-    function extractDuration(text) {
-        const match = text.match(/\((\d{1,3}:\d{2})\)/);
-        return match ? match[1] : null;
-    }
-
-    function extractLinks(text) {
-        const links = [];
-        const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-            links.push({ text: match[1], url: match[2] });
+        let users = getUserList();
+        if (users.length === 0) {
+            users = [DEFAULT_USER];
+            setUserList(users);
+            setCurrentUser(DEFAULT_USER);
+        } else {
+            const cu = getCurrentUser();
+            if (!users.includes(cu)) setCurrentUser(users[0]);
         }
-        return links;
     }
 
-    function isQuizTask(text) {
-        return /quiz|i got\s*_+%/i.test(text);
-    }
-
-    function countBlanks(text) {
-        const matches = text.match(/_{2,}/g);
-        return matches ? matches.length : 0;
-    }
-
-    function debounce(fn, delay) {
-        let timer;
-        return function(...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
-        };
-    }
-
-    // ---------- Storage ----------
     function loadTaskStates() {
+        const key = getUserStorageKey('aleph-beth-task-states');
         try {
-            const raw = localStorage.getItem(CONFIG.storageKey);
+            const raw = localStorage.getItem(key);
             if (!raw) return {};
             const data = JSON.parse(raw);
             const migrated = {};
             for (const [id, val] of Object.entries(data)) {
-                if (typeof val === 'boolean') {
-                    migrated[id] = { checked: val, values: [] };
-                } else if (val && typeof val.checked === 'boolean') {
-                    migrated[id] = { checked: val.checked, values: Array.isArray(val.values) ? val.values : [] };
-                } else {
-                    migrated[id] = { checked: false, values: [] };
-                }
+                if (typeof val === 'boolean') migrated[id] = { checked: val, values: [] };
+                else if (val && typeof val.checked === 'boolean') migrated[id] = { checked: val.checked, values: Array.isArray(val.values) ? val.values : [] };
+                else migrated[id] = { checked: false, values: [] };
             }
             return migrated;
-        } catch (e) {
-            console.warn('Failed to load task states:', e);
-            return {};
-        }
+        } catch (e) { console.warn('Failed to load task states:', e); return {}; }
     }
 
     const saveTaskStates = debounce(function(states) {
-        try {
-            localStorage.setItem(CONFIG.storageKey, JSON.stringify(states));
-        } catch (e) {
-            console.warn('Failed to save task states:', e);
-        }
+        const key = getUserStorageKey('aleph-beth-task-states');
+        try { localStorage.setItem(key, JSON.stringify(states)); } catch (e) { console.warn('Failed to save task states:', e); }
     }, CONFIG.debounceMs);
 
     function setCheckboxState(taskId, checked) {
         const states = loadTaskStates();
         if (!states[taskId]) states[taskId] = { checked: false, values: [] };
         states[taskId].checked = checked;
-        try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
+        saveTaskStates(states);
+        return states;   // <-- return updated object for immediate progress refresh
     }
 
     function setBlankValue(taskId, blankIndex, value) {
@@ -641,8 +766,161 @@
         if (!states[taskId]) states[taskId] = { checked: false, values: [] };
         if (!Array.isArray(states[taskId].values)) states[taskId].values = [];
         states[taskId].values[blankIndex] = value;
-        try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(states)); } catch(e) {}
+        saveTaskStates(states);
     }
+
+    function getPerUserKey(base) { return getUserStorageKey(base); }
+
+    // ---------- User pill & dropdown ----------
+    function updateUserPill() { dom.userPillName.textContent = currentUser; }
+
+    function renderUserDropdown() {
+        const users = getUserList();
+        const dropdown = dom.userDropdown;
+        dropdown.innerHTML = '';
+        users.forEach(user => {
+            const item = document.createElement('div');
+            item.className = 'user-dropdown-item';
+            item.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.5 7.063C16.5 10.258 14.57 13 12 13c-2.572 0-4.5-2.742-4.5-5.938C7.5 3.868 9.16 2 12 2s4.5 1.867 4.5 5.063zM4.102 20.142C4.487 20.6 6.145 22 12 22c5.855 0 7.512-1.4 7.898-1.857a.416.416 0 0 0 .09-.317C19.9 18.944 19.106 15 12 15s-7.9 3.944-7.989 4.826a.416.416 0 0 0 .091.317z"/></svg>
+                <span>${escapeHtml(user)}</span>
+            `;
+            item.addEventListener('click', (e) => { e.stopPropagation(); switchUser(user); closeUserDropdown(); });
+            dropdown.appendChild(item);
+        });
+
+        const divider = document.createElement('div');
+        divider.className = 'user-dropdown-divider';
+        dropdown.appendChild(divider);
+
+        const editItem = document.createElement('div');
+        editItem.className = 'user-dropdown-item';
+        editItem.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            <span>Edit name</span>
+        `;
+        editItem.addEventListener('click', (e) => { e.stopPropagation(); openUserModal('edit', currentUser); });
+        dropdown.appendChild(editItem);
+
+        const addItem = document.createElement('div');
+        addItem.className = 'user-dropdown-item';
+        addItem.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <span>Add user</span>
+        `;
+        addItem.addEventListener('click', (e) => { e.stopPropagation(); openUserModal('add'); });
+        dropdown.appendChild(addItem);
+
+        if (users.length > 1) {
+            const removeItem = document.createElement('div');
+            removeItem.className = 'user-dropdown-item';
+            removeItem.innerHTML = `
+                <svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                <span>Remove user</span>
+            `;
+            removeItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`Remove user "${currentUser}"? This cannot be undone.`)) { removeCurrentUser(); closeUserDropdown(); }
+            });
+            dropdown.appendChild(removeItem);
+        }
+    }
+
+    function toggleUserDropdown() {
+        if (dom.userDropdown.classList.contains('visible')) { closeUserDropdown(); }
+        else { renderUserDropdown(); dom.userDropdown.classList.add('visible'); dom.userPill.classList.add('open'); }
+    }
+    function closeUserDropdown() { dom.userDropdown.classList.remove('visible'); dom.userPill.classList.remove('open'); }
+
+    function switchUser(name) {
+        if (name === currentUser) return;
+        setCurrentUser(name);
+        updateUserPill();
+        const states = loadTaskStates();
+        refreshUIInPlace(states);
+    }
+
+    function removeCurrentUser() {
+        const users = getUserList().filter(u => u !== currentUser);
+        if (users.length === 0) users.push(DEFAULT_USER);
+        const prefix = `user-${currentUser}-`;
+        Object.keys(localStorage).forEach(key => { if (key.startsWith(prefix)) localStorage.removeItem(key); });
+        setUserList(users);
+        setCurrentUser(users[0]);
+        updateUserPill();
+        const states = loadTaskStates();
+        refreshUIInPlace(states);
+    }
+
+    // ---------- User name modal ----------
+    let userModalMode = 'edit';
+    let userModalTargetUser = '';
+
+    function openUserModal(mode, user = '') {
+        userModalMode = mode;
+        if (mode === 'edit') {
+            dom.userModalTitle.textContent = 'Edit Name';
+            dom.userNameInput.value = user;
+            userModalTargetUser = user;
+        } else {
+            dom.userModalTitle.textContent = 'Add User';
+            dom.userNameInput.value = '';
+            userModalTargetUser = '';
+        }
+        dom.userModalBackdrop.classList.add('visible');
+        dom.userNameInput.focus();
+    }
+    function closeUserModal() { dom.userModalBackdrop.classList.remove('visible'); }
+
+    function saveUserModal() {
+        const name = dom.userNameInput.value.trim();
+        if (!name) { alert('Name cannot be empty.'); return; }
+        if (name.length > 30) { alert('Name too long.'); return; }
+        let users = getUserList();
+        if (userModalMode === 'edit') {
+            if (name !== userModalTargetUser && users.includes(name)) { alert('A user with that name already exists.'); return; }
+            const index = users.indexOf(userModalTargetUser);
+            if (index !== -1) {
+                users[index] = name;
+                setUserList(users);
+                const oldPrefix = `user-${userModalTargetUser}-`;
+                const newPrefix = `user-${name}-`;
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith(oldPrefix)) {
+                        const newKey = key.replace(oldPrefix, newPrefix);
+                        localStorage.setItem(newKey, localStorage.getItem(key));
+                        localStorage.removeItem(key);
+                    }
+                });
+                if (currentUser === userModalTargetUser) { setCurrentUser(name); updateUserPill(); }
+            }
+        } else {
+            if (users.includes(name)) { alert('A user with that name already exists.'); return; }
+            users.push(name);
+            setUserList(users);
+            // Immediately switch to the newly created user
+            setCurrentUser(name);
+            updateUserPill();
+            const states = loadTaskStates();
+            refreshUIInPlace(states);
+        }
+        closeUserModal();
+        renderUserDropdown();
+    }
+
+    // ---------- Utility ----------
+    function generateTaskId(weekTitle, dayTitle, taskText, index = 0) {
+        const composite = `${weekTitle}::${dayTitle}::${index}::${taskText.trim()}`;
+        let hash = 0;
+        for (let i = 0; i < composite.length; i++) { const char = composite.charCodeAt(i); hash = ((hash << 5) - hash) + char; hash |= 0; }
+        return 'task-' + Math.abs(hash).toString(36);
+    }
+    function convertMarkdownLinksToHtml(text) { return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'); }
+    function extractDuration(text) { const match = text.match(/\((\d{1,3}:\d{2})\)/); return match ? match[1] : null; }
+    function extractLinks(text) { const links = []; const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g; let match; while ((match = regex.exec(text)) !== null) links.push({ text: match[1], url: match[2] }); return links; }
+    function isQuizTask(text) { return /quiz|i got\s*_+%/i.test(text); }
+    function countBlanks(text) { const matches = text.match(/_{2,}/g); return matches ? matches.length : 0; }
+    function debounce(fn, delay) { let timer; return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); }; }
 
     // ---------- Parser ----------
     function parseLessons(markdown) {
@@ -653,47 +931,26 @@
             const line = lines[i];
             const trimmed = line.trim();
             if (trimmed === '') {
-                if (pendingMetadata && currentDay) {
-                    currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
-                    pendingMetadata = null;
-                } else if (pendingMetadata && currentWeek && !currentDay) {
-                    currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
-                    pendingMetadata = null;
-                }
+                if (pendingMetadata && currentDay) { currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata; pendingMetadata = null; }
+                else if (pendingMetadata && currentWeek && !currentDay) { currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata; pendingMetadata = null; }
                 continue;
             }
             const weekMatch = trimmed.match(/^#{1,2}\s+Week\s+(\d+)\s*$/i);
             if (weekMatch) {
-                if (pendingMetadata && currentWeek) {
-                    currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
-                    pendingMetadata = null;
-                }
+                if (pendingMetadata && currentWeek) { currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata; pendingMetadata = null; }
                 currentWeek = { id: 'week-'+weekMatch[1], title: 'Week '+weekMatch[1], weekNumber: parseInt(weekMatch[1],10), metadata: null, days: [] };
-                currentDay = null;
-                weeks.push(currentWeek);
-                continue;
+                currentDay = null; weeks.push(currentWeek); continue;
             }
             const dayMatch = trimmed.match(/^###\s+Day\s+(\d+)\s*$/i);
             if (dayMatch && currentWeek) {
-                if (pendingMetadata && currentDay) {
-                    currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
-                    pendingMetadata = null;
-                }
+                if (pendingMetadata && currentDay) { currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata; pendingMetadata = null; }
                 currentDay = { id: currentWeek.id+'-day-'+dayMatch[1], title: 'Day '+dayMatch[1], dayNumber: parseInt(dayMatch[1],10), metadata: null, tasks: [] };
-                currentWeek.days.push(currentDay);
-                continue;
+                currentWeek.days.push(currentDay); continue;
             }
-            if (trimmed.startsWith('>')) {
-                const metaText = trimmed.replace(/^>\s*/, '').trim();
-                if (metaText) pendingMetadata = metaText;
-                continue;
-            }
+            if (trimmed.startsWith('>')) { const metaText = trimmed.replace(/^>\s*/, '').trim(); if (metaText) pendingMetadata = metaText; continue; }
             const taskMatch = trimmed.match(/^-\s+\[(\s|x)\]\s+(.+)$/);
             if (taskMatch && currentDay) {
-                if (pendingMetadata) {
-                    currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
-                    pendingMetadata = null;
-                }
+                if (pendingMetadata) { currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata; pendingMetadata = null; }
                 const isChecked = taskMatch[1] === 'x';
                 const rawText = taskMatch[2].trim();
                 const duration = extractDuration(rawText);
@@ -702,16 +959,10 @@
                 const blankCount = countBlanks(rawText);
                 const taskIndex = currentDay.tasks.length;
                 const taskId = generateTaskId(currentWeek.title, currentDay.title, rawText, taskIndex);
-                currentDay.tasks.push({
-                    id: taskId, rawText, displayText: rawText,
-                    checked: isChecked, duration, links, isQuiz: quizFlag, blankCount
-                });
+                currentDay.tasks.push({ id: taskId, rawText, displayText: rawText, checked: isChecked, duration, links, isQuiz: quizFlag, blankCount });
                 continue;
             }
-            if (pendingMetadata && currentDay) {
-                currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
-                pendingMetadata = null;
-            }
+            if (pendingMetadata && currentDay) { currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata; pendingMetadata = null; }
         }
         if (pendingMetadata && currentDay) currentDay.metadata = (currentDay.metadata ? currentDay.metadata + ' ' : '') + pendingMetadata;
         else if (pendingMetadata && currentWeek && !currentDay) currentWeek.metadata = (currentWeek.metadata ? currentWeek.metadata + ' ' : '') + pendingMetadata;
@@ -725,15 +976,11 @@
         const offset = circumference * (1 - Math.min(percent, 100) / 100);
         const strokeWidth = size === 24 ? 1.8 : 1.6;
         const complete = percent >= 100;
-        return `
-            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
                 <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="var(--card-border)" stroke-width="${strokeWidth}" />
-                <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="var(--success)" stroke-width="${strokeWidth}"
-                    stroke-dasharray="${circumference.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="round"
-                    transform="rotate(-90 ${size/2} ${size/2})" style="transition: stroke-dashoffset 0.3s ease;" />
+                <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="var(--success)" stroke-width="${strokeWidth}" stroke-dasharray="${circumference.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${size/2} ${size/2})" style="transition: stroke-dashoffset 0.3s ease;" />
                 ${complete ? `<polyline points="${size*0.3},${size*0.55} ${size*0.45},${size*0.7} ${size*0.7},${size*0.4}" fill="none" stroke="var(--success)" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" />` : ''}
-            </svg>
-        `;
+            </svg>`;
     }
 
     // ---------- Rendering ----------
@@ -743,21 +990,35 @@
         dom.mainContent.innerHTML = '';
         if (!weeksData || weeksData.length === 0) {
             dom.mainContent.innerHTML = `<div class="error-state"><p>No schedule data found.</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
-            updateTotalProgress(weeksData, savedStates);
-            return;
+            updateTotalProgress(weeksData, savedStates); return;
         }
         weeksData.forEach(week => {
             if (!(week.id in collapseState.weeks)) collapseState.weeks[week.id] = false;
-            week.days.forEach(day => {
-                if (!(day.id in collapseState.days)) collapseState.days[day.id] = false;
-            });
+            week.days.forEach(day => { if (!(day.id in collapseState.days)) collapseState.days[day.id] = false; });
         });
-        weeksData.forEach(week => {
-            const el = buildWeekElement(week, savedStates);
-            dom.mainContent.appendChild(el);
-        });
+        weeksData.forEach(week => { const el = buildWeekElement(week, savedStates); dom.mainContent.appendChild(el); });
         updateTotalProgress(weeksData, savedStates);
         buildFallbackMap(weeksData);
+    }
+
+    function refreshUIInPlace(savedStates) {
+        document.querySelectorAll('.task-checkbox').forEach(cb => {
+            const taskId = cb.getAttribute('data-task-id');
+            const state = savedStates[taskId];
+            cb.checked = state ? state.checked : false;
+        });
+        document.querySelectorAll('.fillable-input').forEach(inp => {
+            const taskId = inp.getAttribute('data-task-id');
+            const idx = parseInt(inp.getAttribute('data-blank-index'), 10);
+            const state = savedStates[taskId];
+            const val = (state && state.values && state.values[idx]) ? state.values[idx] : '';
+            inp.value = val;
+        });
+        document.querySelectorAll('.task-item').forEach(item => {
+            const cb = item.querySelector('.task-checkbox');
+            if (cb) { if (cb.checked) item.classList.add('completed'); else item.classList.remove('completed'); }
+        });
+        refreshAllProgress();
     }
 
     function buildFallbackMap(weeksData) {
@@ -775,12 +1036,10 @@
         const card = document.createElement('div');
         card.className = 'week-card' + (isExpanded ? ' expanded' : '');
         card.setAttribute('data-week-id', week.id);
-        let html = '';
-        html += '<div class="week-header" data-action="toggle-week" data-week-id="'+week.id+'">';
+        let html = '<div class="week-header" data-action="toggle-week" data-week-id="'+week.id+'">';
         html += '<div class="week-title-group"><span class="week-icon">'+week.weekNumber+'</span><span class="week-title">'+escapeHtml(week.title)+'</span></div>';
         html += '<div class="week-progress-ring" title="'+wp.completed+'/'+wp.total+' done">'+progressRingSVG(wp.percent, 24)+'</div>';
-        html += '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-        html += '</div>';
+        html += '<svg class="week-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>';
         html += '<div class="week-body-wrapper"><div class="week-body-inner"><div class="week-body-content">';
         week.days.forEach(day => { html += buildDayHtml(day, savedStates); });
         html += '</div></div></div>';
@@ -796,8 +1055,7 @@
         html += '<div class="day-header" data-action="toggle-day" data-day-id="'+day.id+'">';
         html += '<div class="day-title-group"><span class="day-title">'+escapeHtml(day.title)+'</span></div>';
         html += '<div class="day-progress-ring" title="'+dp.completed+'/'+dp.total+' done">'+progressRingSVG(dp.percent, 20)+'</div>';
-        html += '<svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-        html += '</div>';
+        html += '<svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>';
         html += '<div class="day-body-wrapper"><div class="day-body-inner"><div class="day-body-content">';
         day.tasks.forEach(task => { html += buildTaskHtml(task, savedStates); });
         html += '</div></div></div></div>';
@@ -823,25 +1081,15 @@
         html += '<div class="task-badges">';
         if (task.duration) html += '<span class="task-duration-badge">⏱ '+escapeHtml(task.duration)+'</span>';
         if (task.isQuiz) html += '<span class="task-quiz-badge">📝 Quiz</span>';
-        task.links.forEach(link => {
-            html += '<a href="'+escapeHtml(link.url)+'" target="_blank" rel="noopener" class="task-link-badge">🔗 '+escapeHtml(link.text)+'</a>';
-        });
+        task.links.forEach(link => { html += '<a href="'+escapeHtml(link.url)+'" target="_blank" rel="noopener" class="task-link-badge">🔗 '+escapeHtml(link.text)+'</a>'; });
         html += '</div></div></div>';
         return html;
     }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
+    function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
     function attachWeekEventListeners(card, week) {
-        card.querySelector('.week-header')?.addEventListener('click', function(e) {
-            if (e.target.closest('a')) return;
-            toggleWeekCollapse(week.id, card);
-        });
+        card.querySelector('.week-header')?.addEventListener('click', function(e) { if (e.target.closest('a')) return; toggleWeekCollapse(week.id, card); });
         card.querySelectorAll('.day-header').forEach(dh => {
             dh.addEventListener('click', function(e) {
                 if (e.target.closest('a')) return;
@@ -850,9 +1098,7 @@
                 if (dayId && sec) toggleDayCollapse(dayId, sec);
             });
         });
-        card.querySelectorAll('.task-checkbox').forEach(cb => {
-            cb.addEventListener('change', function() { handleCheckboxChange(cb); });
-        });
+        card.querySelectorAll('.task-checkbox').forEach(cb => { cb.addEventListener('change', function() { handleCheckboxChange(cb); }); });
         card.querySelectorAll('.fillable-input').forEach(inp => {
             inp.addEventListener('input', function() { handleBlankInput(inp); });
             inp.addEventListener('change', function() { handleBlankInput(inp); });
@@ -865,153 +1111,92 @@
         setBlankValue(taskId, blankIndex, inputEl.value);
     }
 
-    function toggleWeekCollapse(weekId, card) {
-        const expanded = card.classList.contains('expanded');
-        if (expanded) { card.classList.remove('expanded'); collapseState.weeks[weekId] = false; }
-        else { card.classList.add('expanded'); collapseState.weeks[weekId] = true; }
-    }
-
-    function toggleDayCollapse(dayId, sec) {
-        const expanded = sec.classList.contains('expanded');
-        if (expanded) { sec.classList.remove('expanded'); collapseState.days[dayId] = false; }
-        else { sec.classList.add('expanded'); collapseState.days[dayId] = true; }
-    }
+    function toggleWeekCollapse(weekId, card) { const expanded = card.classList.contains('expanded'); if (expanded) { card.classList.remove('expanded'); collapseState.weeks[weekId] = false; } else { card.classList.add('expanded'); collapseState.weeks[weekId] = true; } }
+    function toggleDayCollapse(dayId, sec) { const expanded = sec.classList.contains('expanded'); if (expanded) { sec.classList.remove('expanded'); collapseState.days[dayId] = false; } else { sec.classList.add('expanded'); collapseState.days[dayId] = true; } }
 
     function handleCheckboxChange(cb) {
         const taskId = cb.getAttribute('data-task-id');
         const checked = cb.checked;
         const taskItem = cb.closest('.task-item');
-        if (taskItem) {
-            if (checked) taskItem.classList.add('completed');
-            else taskItem.classList.remove('completed');
-        }
-        setCheckboxState(taskId, checked);
-        refreshAllProgress();
+        if (taskItem) { if (checked) taskItem.classList.add('completed'); else taskItem.classList.remove('completed'); }
+        const states = setCheckboxState(taskId, checked);
+        refreshAllProgress(states);   // immediate, uses returned in-memory states
     }
 
     // ---------- Progress ----------
     function calculateProgress(week, savedStates) {
         let total=0, completed=0;
-        week.days.forEach(day => {
-            day.tasks.forEach(task => {
-                total++;
-                const state = savedStates[task.id] || { checked: task.checked };
-                if (state.checked) completed++;
-            });
-        });
+        week.days.forEach(day => { day.tasks.forEach(task => { total++; const state = savedStates[task.id] || { checked: task.checked }; if (state.checked) completed++; }); });
         return { total, completed, percent: total>0 ? (completed/total)*100 : 0 };
     }
-
     function calculateDayProgress(day, savedStates) {
         let total=0, completed=0;
-        day.tasks.forEach(task => {
-            total++;
-            const state = savedStates[task.id] || { checked: task.checked };
-            if (state.checked) completed++;
-        });
+        day.tasks.forEach(task => { total++; const state = savedStates[task.id] || { checked: task.checked }; if (state.checked) completed++; });
         return { total, completed, percent: total>0 ? (completed/total)*100 : 0 };
     }
-
-    // --- Baseline & Level Logic ---
     function getCompletedDays(weeksData, savedStates) {
         let completedDays = 0;
         if (!weeksData) return 0;
-        weeksData.forEach(week => {
-            week.days.forEach(day => {
-                const dp = calculateDayProgress(day, savedStates);
-                if (dp.completed === dp.total && dp.total > 0) completedDays++;
-            });
-        });
+        weeksData.forEach(week => { week.days.forEach(day => { const dp = calculateDayProgress(day, savedStates); if (dp.completed === dp.total && dp.total > 0) completedDays++; }); });
         return completedDays;
     }
-
-    function getTotalDays(weeksData) {
-        let totalDays = 0;
-        weeksData.forEach(week => { totalDays += week.days.length; });
-        return totalDays;
-    }
-
-    function getLevel(percent) {
-        if (percent >= 100) return 'Graduate';
-        if (percent >= 75) return 'Senior';
-        if (percent >= 50) return 'Reader';
-        if (percent >= 25) return 'Junior';
-        return 'Beginner';
-    }
+    function getTotalDays(weeksData) { let totalDays = 0; weeksData.forEach(week => { totalDays += week.days.length; }); return totalDays; }
+    function getLevel(percent) { if (percent >= 100) return 'Graduate'; if (percent >= 75) return 'Senior'; if (percent >= 50) return 'Reader'; if (percent >= 25) return 'Junior'; return 'Beginner'; }
 
     function updateTotalProgress(weeksData, savedStates) {
         const currentTotalDays = getTotalDays(weeksData);
-        let baselineTotalDays = localStorage.getItem('hebrewBaselineTotalDays');
-        if (!baselineTotalDays) {
-            baselineTotalDays = currentTotalDays;
-            localStorage.setItem('hebrewBaselineTotalDays', baselineTotalDays);
-        } else {
-            baselineTotalDays = parseInt(baselineTotalDays, 10);
-        }
+        const baselineKey = getPerUserKey('hebrewBaselineTotalDays');
+        let baselineTotalDays = localStorage.getItem(baselineKey);
+        if (!baselineTotalDays) { baselineTotalDays = currentTotalDays; localStorage.setItem(baselineKey, baselineTotalDays); }
+        else { baselineTotalDays = parseInt(baselineTotalDays, 10); }
 
         const completedDays = getCompletedDays(weeksData, savedStates);
         const barPercent = baselineTotalDays > 0 ? Math.min(100, (completedDays / baselineTotalDays) * 100) : 0;
         const percentForLevel = baselineTotalDays > 0 ? (completedDays / baselineTotalDays) * 100 : 0;
         const candidateLevel = getLevel(percentForLevel);
 
-        // Highest level stored to prevent demotion
-        let highestLevel = localStorage.getItem('hebrewHighestLevel') || 'Beginner';
+        const highestKey = getPerUserKey('hebrewHighestLevel');
+        let highestLevel = localStorage.getItem(highestKey) || 'Beginner';
         const levelsOrder = ['Beginner','Junior','Reader','Senior','Graduate'];
-        if (levelsOrder.indexOf(candidateLevel) > levelsOrder.indexOf(highestLevel)) {
-            highestLevel = candidateLevel;
-            localStorage.setItem('hebrewHighestLevel', highestLevel);
-        }
+        if (levelsOrder.indexOf(candidateLevel) > levelsOrder.indexOf(highestLevel)) { highestLevel = candidateLevel; localStorage.setItem(highestKey, highestLevel); }
 
         dom.totalProgressBar.style.width = barPercent + '%';
         dom.progressInfo.textContent = `${highestLevel} · ${completedDays} Days Completed`;
 
-        // Show update note if curriculum expanded
         if (currentTotalDays > baselineTotalDays) {
             dom.baselineUpdateNote.classList.add('visible');
             dom.baselineUpdateNote.onclick = function() {
-                localStorage.setItem('hebrewBaselineTotalDays', currentTotalDays);
-                // Recalculate with new baseline – level won't drop because highestLevel is kept
+                localStorage.setItem(baselineKey, currentTotalDays);
                 const newPercent = (completedDays / currentTotalDays) * 100;
                 const newCandidate = getLevel(newPercent);
-                if (levelsOrder.indexOf(newCandidate) > levelsOrder.indexOf(highestLevel)) {
-                    highestLevel = newCandidate;
-                    localStorage.setItem('hebrewHighestLevel', highestLevel);
-                }
+                if (levelsOrder.indexOf(newCandidate) > levelsOrder.indexOf(highestLevel)) { highestLevel = newCandidate; localStorage.setItem(highestKey, highestLevel); }
                 dom.totalProgressBar.style.width = Math.min(100, newPercent) + '%';
                 dom.progressInfo.textContent = `${highestLevel} · ${completedDays} Days Completed`;
                 dom.baselineUpdateNote.classList.remove('visible');
             };
-        } else {
-            dom.baselineUpdateNote.classList.remove('visible');
-        }
+        } else { dom.baselineUpdateNote.classList.remove('visible'); }
 
-        // ── Celebrations ──
-        const lastCelebrated = localStorage.getItem('hebrewLastCelebratedLevel') || '';
-        const graduationDone = localStorage.getItem('hebrewGraduationCelebrated') === 'true';
+        const celebratedKey = getPerUserKey('hebrewLastCelebratedLevel');
+        const gradKey = getPerUserKey('hebrewGraduationCelebrated');
+        const lastCelebrated = localStorage.getItem(celebratedKey) || '';
+        const graduationDone = localStorage.getItem(gradKey) === 'true';
 
         if (highestLevel !== lastCelebrated) {
-            // New level reached (or first time seeing this level)
             if (highestLevel === 'Graduate' && !graduationDone) {
-                // Show graduation overlay
                 dom.gradOverlay.classList.add('visible');
-                localStorage.setItem('hebrewGraduationCelebrated', 'true');
-                localStorage.setItem('hebrewLastCelebratedLevel', 'Graduate');
+                localStorage.setItem(gradKey, 'true');
+                localStorage.setItem(celebratedKey, 'Graduate');
             } else if (highestLevel !== 'Graduate') {
-                // Show toast for the new level
                 dom.toastText.textContent = `You've reached ${highestLevel}!`;
                 dom.levelToast.classList.add('show');
-                localStorage.setItem('hebrewLastCelebratedLevel', highestLevel);
-                setTimeout(() => {
-                    dom.levelToast.classList.remove('show');
-                }, 3000);
+                localStorage.setItem(celebratedKey, highestLevel);
+                setTimeout(() => dom.levelToast.classList.remove('show'), 3000);
             }
         }
-
-        dom.totalProgressSection.style.display = 'block';
     }
 
-    function refreshAllProgress() {
-        const states = loadTaskStates();
+    function refreshAllProgress(states) {
+        if (!states) states = loadTaskStates();
         const weeksData = window._currentWeeksData;
         if (!weeksData) return;
         updateTotalProgress(weeksData, states);
@@ -1035,27 +1220,17 @@
     function exportProgress() {
         const states = loadTaskStates();
         const fallbackMap = window._fallbackMap || {};
-        const exportData = { version: 1, tasks: {} };
+        const exportData = { version: 1, user: currentUser, tasks: {} };
         for (const [taskId, state] of Object.entries(states)) {
             let fallbackKey = '';
-            for (const [key, id] of Object.entries(fallbackMap)) {
-                if (id === taskId) { fallbackKey = key; break; }
-            }
-            exportData.tasks[taskId] = {
-                checked: state.checked,
-                values: state.values || [],
-                fallbackKey: fallbackKey
-            };
+            for (const [key, id] of Object.entries(fallbackMap)) { if (id === taskId) { fallbackKey = key; break; } }
+            exportData.tasks[taskId] = { checked: state.checked, values: state.values || [], fallbackKey: fallbackKey };
         }
         const dateStr = new Date().toISOString().slice(0,10);
         const filename = `hebrew-progress-${dateStr}.json`;
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
+        const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
     }
 
     function importProgress(file) {
@@ -1068,23 +1243,13 @@
                 const fallbackMap = window._fallbackMap || {};
                 for (const [oldId, taskState] of Object.entries(data.tasks)) {
                     let targetId = oldId;
-                    if (!(targetId in states) && taskState.fallbackKey && fallbackMap[taskState.fallbackKey]) {
-                        targetId = fallbackMap[taskState.fallbackKey];
-                    }
-                    if (targetId) {
-                        states[targetId] = {
-                            checked: taskState.checked,
-                            values: taskState.values || []
-                        };
-                    }
+                    if (!(targetId in states) && taskState.fallbackKey && fallbackMap[taskState.fallbackKey]) targetId = fallbackMap[taskState.fallbackKey];
+                    if (targetId) { states[targetId] = { checked: taskState.checked, values: taskState.values || [] }; }
                 }
                 saveTaskStates(states);
-                renderApp(window._currentWeeksData, states);
+                refreshUIInPlace(states);
                 alert('Progress imported successfully.');
-            } catch (err) {
-                alert('Failed to import progress. The file may be corrupted.');
-                console.error(err);
-            }
+            } catch (err) { alert('Failed to import progress. The file may be corrupted.'); console.error(err); }
         };
         reader.readAsText(file);
     }
@@ -1095,39 +1260,23 @@
             const response = await fetch(CONFIG.versionFile, { headers: { 'Cache-Control': 'no-cache' } });
             if (response.ok) {
                 const version = (await response.text()).trim();
-                if (version) {
-                    dom.footerVersion.textContent = version;
-                    dom.overlayVersionNumber.textContent = version;
-                }
+                if (version) { dom.footerVersion.textContent = version; dom.overlayVersionNumber.textContent = version; return version; }
             }
-        } catch (e) {
-            console.warn('Could not fetch version.txt', e);
-        }
+        } catch (e) { console.warn('Could not fetch version.txt', e); }
+        return null;
     }
 
     // ---------- Overlay & Feedback ----------
-    function openOverlay() {
-        dom.aboutOverlay.classList.add('visible');
-        dom.aboutOverlay.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeOverlay() {
-        dom.aboutOverlay.classList.remove('visible');
-        dom.aboutOverlay.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    }
+    function openOverlay() { dom.aboutOverlay.classList.add('visible'); dom.aboutOverlay.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+    function closeOverlay() { dom.aboutOverlay.classList.remove('visible'); dom.aboutOverlay.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
 
     async function sendFeedback() {
         const name = dom.feedbackName.value.trim();
         const email = dom.feedbackEmail.value.trim();
         const message = dom.feedbackTextarea.value.trim();
-        if (!name || !email || !message) {
-            alert('Please fill out all fields.');
-            return;
-        }
+        if (!name || !email || !message) { alert('Please fill out all fields.'); return; }
         dom.sendFeedbackBtn.disabled = true;
-        dom.sendFeedbackBtn.textContent = 'Sending…';
+        dom.sendFeedbackBtn.innerHTML = `Sending…`;
         try {
             const formData = new FormData();
             formData.append('access_key', CONFIG.web3formsKey);
@@ -1135,75 +1284,35 @@
             formData.append('email', email);
             formData.append('message', message);
             formData.append('subject', 'Learn Biblical Hebrew Feedback');
-            const response = await fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
             const data = await response.json();
-            if (data.success) {
-                alert('Thank you! Your message has been sent.');
-                dom.feedbackName.value = '';
-                dom.feedbackEmail.value = '';
-                dom.feedbackTextarea.value = '';
-            } else {
-                alert('Something went wrong. Please try again later.');
-            }
-        } catch (error) {
-            alert('Network error. Please try again later.');
-        } finally {
+            if (data.success) { alert('Thank you! Your message has been sent.'); dom.feedbackName.value = ''; dom.feedbackEmail.value = ''; dom.feedbackTextarea.value = ''; }
+            else { alert('Something went wrong. Please try again later.'); }
+        } catch (error) { alert('Network error. Please try again later.'); }
+        finally {
             dom.sendFeedbackBtn.disabled = false;
-            dom.sendFeedbackBtn.textContent = '📧 Send Message';
+            dom.sendFeedbackBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L2 8.66667L11.5833 12.4167M22 2L15.3333 22L11.5833 12.4167M22 2L11.5833 12.4167"/></svg> Send Message`;
         }
     }
 
     // ---------- Install prompt ----------
     let deferredPrompt = null;
-    function handleBeforeInstallPrompt(e) {
-        e.preventDefault();
-        deferredPrompt = e;
-        dom.installBtn.classList.remove('hidden');
-    }
-
-    async function installApp() {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            dom.installBtn.classList.add('hidden');
-            deferredPrompt = null;
-        }
-    }
-
-    function checkInstalled() {
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            dom.installBtn.classList.add('hidden');
-        }
-    }
-
+    function handleBeforeInstallPrompt(e) { e.preventDefault(); deferredPrompt = e; dom.installBtn.classList.remove('hidden'); }
+    async function installApp() { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { dom.installBtn.classList.add('hidden'); deferredPrompt = null; } }
+    function checkInstalled() { if (window.matchMedia('(display-mode: standalone)').matches) dom.installBtn.classList.add('hidden'); }
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', () => {
-        dom.installBtn.classList.add('hidden');
-    });
+    window.addEventListener('appinstalled', () => { dom.installBtn.classList.add('hidden'); });
 
-    // ---------- Network ----------
-    async function fetchLessonsMarkdown() {
-        const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } });
-        if (!resp.ok) throw new Error('Failed to fetch lessons.md');
-        return await resp.text();
-    }
+    // ---------- Network & Lessons Caching ----------
+    async function fetchLessonsMarkdown() { const resp = await fetch(CONFIG.lessonsFile, { headers: { 'Cache-Control': 'no-cache' } }); if (!resp.ok) throw new Error('Failed to fetch lessons.md'); return await resp.text(); }
 
     async function registerServiceWorker() {
         if (!('serviceWorker' in navigator)) return;
         try {
-            const reg = await navigator.serviceWorker.register('./sw.js', {
-                scope: './',
-                updateViaCache: 'none'
-            });
+            const reg = await navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' });
             reg.addEventListener('updatefound', () => {
                 const newWorker = reg.installing;
-                newWorker?.addEventListener('statechange', () => {
-                    if (newWorker.state==='installed' && navigator.serviceWorker.controller) console.log('New SW ready.');
-                });
+                newWorker?.addEventListener('statechange', () => { if (newWorker.state==='installed' && navigator.serviceWorker.controller) console.log('New SW ready.'); });
             });
             if (reg.waiting) reg.waiting.postMessage({ type:'SKIP_WAITING' });
         } catch(e) { console.error('SW reg failed', e); }
@@ -1213,44 +1322,60 @@
     async function initApp() {
         cacheDomReferences();
         checkInstalled();
-        fetchVersion();
+        const version = await fetchVersion();
+        migrateOldDataIfNeeded();
+        currentUser = getCurrentUser();
+        updateUserPill();
+
         const swPromise = registerServiceWorker();
         const savedStates = loadTaskStates();
-        try {
-            const md = await fetchLessonsMarkdown();
-            const weeksData = parseLessons(md);
-            window._currentWeeksData = weeksData;
-            renderApp(weeksData, savedStates);
-        } catch(err) {
-            console.error('Failed to load lessons:', err);
-            dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📡</div><p>Unable to load schedule.</p><p style="font-size:0.85rem;color:var(--text-muted);">${navigator.onLine?'<code>lessons.md</code> missing?':'Offline and no cache. Connect and retry.'}</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
-            updateTotalProgress(null, savedStates);
+
+        const CACHE_KEY = 'hebrew-parsed-lessons';
+        const CACHE_VERSION_KEY = 'hebrew-parsed-version';
+        let weeksData = null;
+        const cachedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+        const cachedLessons = localStorage.getItem(CACHE_KEY);
+
+        if (cachedLessons) { try { weeksData = JSON.parse(cachedLessons); } catch (e) {} }
+        const shouldFetch = !weeksData || (version && cachedVersion !== version);
+
+        if (shouldFetch) {
+            try {
+                const md = await fetchLessonsMarkdown();
+                weeksData = parseLessons(md);
+                if (version) { localStorage.setItem(CACHE_KEY, JSON.stringify(weeksData)); localStorage.setItem(CACHE_VERSION_KEY, version); }
+            } catch (err) {
+                console.error('Failed to load lessons:', err);
+                if (!weeksData && cachedLessons) { try { weeksData = JSON.parse(cachedLessons); } catch(e2) {} }
+                if (!weeksData) {
+                    dom.mainContent.innerHTML = `<div class="error-state"><div class="error-icon">📡</div><p>Unable to load schedule.</p><p style="font-size:0.85rem;color:var(--text-muted);">${navigator.onLine?'<code>lessons.md</code> missing?':'Offline and no cache. Connect and retry.'}</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>`;
+                    updateTotalProgress(null, savedStates); return;
+                }
+            }
         }
+
+        window._currentWeeksData = weeksData;
+        renderApp(weeksData, savedStates);
         await swPromise;
     }
 
     function attachGlobalEventListeners() {
         dom.exportBtn.addEventListener('click', exportProgress);
         dom.importBtn.addEventListener('click', () => dom.importFileInput.click());
-        dom.importFileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                importProgress(e.target.files[0]);
-                e.target.value = '';
-            }
-        });
+        dom.importFileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) { importProgress(e.target.files[0]); e.target.value = ''; } });
         dom.readMoreBtn.addEventListener('click', openOverlay);
         dom.aboutOverlayClose.addEventListener('click', closeOverlay);
-        dom.aboutOverlay.addEventListener('click', (e) => {
-            if (e.target === dom.aboutOverlay) closeOverlay();
-        });
+        dom.aboutOverlay.addEventListener('click', (e) => { if (e.target === dom.aboutOverlay) closeOverlay(); });
         dom.sendFeedbackBtn.addEventListener('click', sendFeedback);
         dom.installBtn.addEventListener('click', installApp);
-        dom.gradCloseBtn.addEventListener('click', () => {
-            dom.gradOverlay.classList.remove('visible');
-        });
-        dom.gradOverlay.addEventListener('click', (e) => {
-            if (e.target === dom.gradOverlay) dom.gradOverlay.classList.remove('visible');
-        });
+        dom.gradCloseBtn.addEventListener('click', () => dom.gradOverlay.classList.remove('visible'));
+        dom.gradOverlay.addEventListener('click', (e) => { if (e.target === dom.gradOverlay) dom.gradOverlay.classList.remove('visible'); });
+
+        dom.userPill.addEventListener('click', (e) => { e.stopPropagation(); toggleUserDropdown(); });
+        document.addEventListener('click', (e) => { if (!dom.userPill.contains(e.target) && !dom.userDropdown.contains(e.target)) closeUserDropdown(); });
+        dom.userModalCancel.addEventListener('click', closeUserModal);
+        dom.userModalSave.addEventListener('click', saveUserModal);
+        dom.userModalBackdrop.addEventListener('click', (e) => { if (e.target === dom.userModalBackdrop) closeUserModal(); });
     }
 
     window.addEventListener('online', () => {
@@ -1259,17 +1384,14 @@
             if (JSON.stringify(weeksData) !== JSON.stringify(window._currentWeeksData)) {
                 window._currentWeeksData = weeksData;
                 renderApp(weeksData, loadTaskStates());
+                const version = localStorage.getItem('hebrew-parsed-version');
+                if (version) localStorage.setItem('hebrew-parsed-lessons', JSON.stringify(weeksData));
             }
         }).catch(() => {});
     });
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            initApp().then(() => attachGlobalEventListeners());
-        });
-    } else {
-        initApp().then(() => attachGlobalEventListeners());
-    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => { initApp().then(() => attachGlobalEventListeners()); }); }
+    else { initApp().then(() => attachGlobalEventListeners()); }
 })();
 </script>
 </body>
